@@ -1,1 +1,5 @@
 zip
+*.o
+*.pyc
+*.a
+*_test
