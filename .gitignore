@@ -3,3 +3,5 @@ zip
 *.pyc
 *.a
 *_test
+other
+readings

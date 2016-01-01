@@ -23,8 +23,8 @@
 #                                                                #
 ##################################################################
 
-CC = 410-gcc
-AR = 410-ar
+CC = gcc
+AR = ar
 #LDFLAGS = -static (see "-static" below)
 
 # -O0 is needed so that gcc doesn't "helpfully" optimize the
