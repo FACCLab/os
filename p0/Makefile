@@ -31,6 +31,30 @@ AR = ar
 # calling convention for static functions.
 CFLAGS = -Wall -Werror -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
 
+# -fstack-protector
+#Emit extra code to check for buffer overflows, such as stack smashing attacks.  
+#This is done by adding a guard variable to functions
+#with vulnerable objects.  This includes functions that call "alloca", 
+#and functions with buffers larger than 8 bytes.  The guards are
+#initialized when a function is entered and then checked when the function exits.  
+#If a guard check fails, an error message is printed
+#and the program exits.
+#NOTE: In Ubuntu 6.10 and later versions this option is enabled by default for C, C++, ObjC, ObjC++, if none of -fno-stack-protector,
+#-nostdlib, nor -ffreestanding are found.
+
+# -fomit-frame-pointer
+#Don't keep the frame pointer in a register for functions that don't need one.  This avoids the instructions to save, set up and restore
+#frame pointers; it also makes an extra register available in many functions.  It also makes debugging impossible on some machines.
+#On some machines, such as the VAX, this flag has no effect, because the standard calling sequence automatically handles the frame
+#pointer and nothing is saved by pretending it doesn't exist.  The machine-description macro "FRAME_POINTER_REQUIRED" controls whether a
+#target machine supports this flag.
+#Starting with GCC version 4.6, the default setting (when not optimizing for size) for 32-bit GNU/Linux x86 and 32-bit Darwin x86 targets
+#has been changed to -fomit-frame-pointer.  The default can be reverted to -fno-omit-frame-pointer by configuring GCC with the
+#--enable-frame-pointer configure option.
+
+# -I
+#Add the directory dir to the list of directories to be searched for header files. 
+
 # If you don't do this, GCC4 will emit code which causes main() to align its
 # stack to a 16-byte boundary. This will cause the base pointer for that
 # function to point into the middle of some padding space allocated to align the
@@ -90,6 +114,8 @@ tests/add_one_test: tests/add_one.o tests/add_one_test.o
 
 html_doc:
 	$(DOC) doxygen.conf
+	sphinx-apidoc -M -l -e -P -f -F -H ElfTools -A AngleNet -V 1.0 -o ./doc/elftools elftools
+	sphinx-build -b html ./doc/elftools ./doc/elftools_html
 
 PRINTOUT=traceback.ps
 
@@ -106,8 +132,10 @@ clean:
 	rm -f tests/tmp-our-output tests/tmp-sample-output
 	rm -f MAKE.* RUN.*
 	rm -f */*.pyc */*/*.pyc */*/*/*.pyc
+	rm -f *.warn
 
 veryclean: clean
+	rm -rf ./doc
 
 # Compare the first four lines of tests/sample.output
 # to the first four lines of output from verify_test.
@@ -125,3 +153,13 @@ tests/tmp-our-output:
 
 verify: tests/tmp-our-output tests/tmp-sample-output
 	@diff -bBw tests/tmp-sample-output tests/tmp-our-output
+
+docfly: veryclean html_doc 
+	if [ -f /home/anglenet/www/projects/api/traceback/index.html ]; then \
+		rm -R /home/anglenet/www/projects/api/traceback/*; \
+	fi;
+	if [ -f /home/anglenet/www/projects/api/elftools/index.html ]; then \
+		rm -R /home/anglenet/www/projects/api/elftools/*; \
+	fi;
+	cp -r ./doc/traceback_html/* /home/anglenet/www/projects/api/traceback/
+	cp -r ./doc/elftools_html/* /home/anglenet/www/projects/api/elftools/
