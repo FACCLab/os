@@ -72,9 +72,9 @@ TRACEBACK_OBJS = traceback/traceback_globals.o \
 				$(MY_TRACEBACK_OBJS:%=traceback/%)
 TEST_PROGS := $(TEST_PROGS:%=tests/%)
 
-.PHONY: update query_update html_doc print clean verify veryclean
+.PHONY: update query_update html_doc print clean verify veryclean dump docfly
 
-all: query_update $(TEST_PROGS) tests/add_one_test tests/verify_test
+all: $(TEST_PROGS) tests/add_one_test tests/verify_test
 
 #doupdate:
 #	./update.pl $(UPDATE_METHOD)
@@ -163,3 +163,6 @@ docfly: veryclean html_doc
 	fi;
 	cp -r ./doc/traceback_html/* /home/anglenet/www/projects/api/traceback/
 	cp -r ./doc/elftools_html/* /home/anglenet/www/projects/api/elftools/
+
+dump: $(TEST_PROGS)
+	readelf -a $^ > ./tests/dump
