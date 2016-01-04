@@ -14,6 +14,33 @@
 /*
  * The traceback function that is the heart of the library
  */
+
+/**
+ * @brief Print the chain of function calls in reverse order.
+ *
+ * @param fp Specifies where to output the trace information.
+ */
 void traceback(FILE *);
+
+/**
+ * @brief Get the last function call's ebp address, excluding
+ * the traceback itself.
+ *
+ * @return The last function call's ebp address.
+ */
+void *getFirstStack();
+
+
+/**
+ * @brief Find a specified function in the global function 
+ * symbol table. If found, return the index to the function in
+ * the symbol table, return -1 otherwise.
+ *
+ * @param addr The specified address of the wanted function.
+ *
+ * @return The index to the function in the symbol table if found,
+ * return -1 otherwise.
+ */
+int funcs_find(void *addr);
 
 #endif /* __traceback_h_ */

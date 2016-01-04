@@ -2,12 +2,29 @@
  *  @brief The traceback function
  *
  *  This file contains the traceback function for the traceback library
- *
+ *      
+ *  @time 2016-01-04 Mon 07:37 PM
  *  @author Harry Q. Bovik (hqbovik)
  *  @bug Unimplemented
  */
 
+#include <stdio.h>
+
+#include "contracts.h"
 #include "traceback_internal.h"
+extern void *getFirstStack();
+
+int funcs_find(void *addr){
+	ASSERT(addr != NULL);
+	int index = 0;
+	while(index <= FUNCTS_MAX_NUM){
+		if(functions[index].addr == addr){
+			return index;
+		}
+		index++;
+	}
+	return 0;
+}
 
 void traceback(FILE *fp)
 {
@@ -17,9 +34,27 @@ void traceback(FILE *fp)
 	 * the symbol. So be sure to always do something with functions */
 
 	/* remove this line once you've got real code here */
-	int i;
-	for(i = 0; i < 20; i++){
-		printf("first function in table name: %s, at: %p\n", functions[i].name,functions[i].addr);
+	ASSERT(fp != NULL);
+	void *ebp;
+	void *eip;
+	void *func_addr;
+	int func_index;
+	ebp = getFirstStack();
+	while(ebp){
+		// Read Eip
+		eip = *((int) ebp+4);
+	  func_addr =(void *)( ((int) *((int)eip - 4)) + (unsigned int) eip);	
+		if((func_index = funcs_find(func_addr)) >= 0){
+			// Found function information in functions array.
+#ifdef DEBUG
+			fprintf(stderr, "Found function %p at [%d]", 
+					func_addr, func_index);
+#endif
+		}else{
+			// Our functions array didnot hold infor about this function.
+			fprintf(fp, "Unknown %p", func_addr);	
+		}
+		ebp = *ebp;
 	}
 }
 

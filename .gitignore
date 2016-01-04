@@ -4,6 +4,7 @@ zip
 *.a
 *_test
 .*.swp
+*.warn
 other
 */doc
 readings
