@@ -128,7 +128,7 @@ clean:
 	rm -rf traceback/*.o tests/*.o \
 			libtraceback.a \
 			$(TEST_PROGS) tests/add_one_test tests/verify_test \
-			*~
+			*~ tests/test tests/test64
 	rm -f tests/tmp-our-output tests/tmp-sample-output
 	rm -f MAKE.* RUN.*
 	rm -f */*.pyc */*/*.pyc */*/*/*.pyc
@@ -166,3 +166,8 @@ docfly: veryclean html_doc
 
 dump: $(TEST_PROGS)
 	readelf -a $^ > ./tests/dump
+
+test: 
+	$(CC) -S -o tests/$@.s $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
+	$(CC) -o tests/$@ $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
+	$(CC) -o tests/$@64 tests/stack_internal.c

@@ -3,5 +3,6 @@ zip
 *.pyc
 *.a
 *_test
+.*.swp
 other
 readings
