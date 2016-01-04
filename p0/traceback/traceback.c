@@ -17,7 +17,10 @@ void traceback(FILE *fp)
 	 * the symbol. So be sure to always do something with functions */
 
 	/* remove this line once you've got real code here */
-	printf("first function in table name: %s\n", functions[0].name);
+	int i;
+	for(i = 0; i < 20; i++){
+		printf("first function in table name: %s, at: %p\n", functions[i].name,functions[i].addr);
+	}
 }
 
 

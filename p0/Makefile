@@ -72,7 +72,7 @@ TRACEBACK_OBJS = traceback/traceback_globals.o \
 				$(MY_TRACEBACK_OBJS:%=traceback/%)
 TEST_PROGS := $(TEST_PROGS:%=tests/%)
 
-.PHONY: update query_update html_doc print clean verify veryclean dump docfly
+.PHONY: update query_update html_doc print clean verify veryclean dump docfly test stack_internal 
 
 all: $(TEST_PROGS) tests/add_one_test tests/verify_test
 
@@ -128,11 +128,12 @@ clean:
 	rm -rf traceback/*.o tests/*.o \
 			libtraceback.a \
 			$(TEST_PROGS) tests/add_one_test tests/verify_test \
-			*~ tests/test tests/test64
+			*~ 
 	rm -f tests/tmp-our-output tests/tmp-sample-output
 	rm -f MAKE.* RUN.*
 	rm -f */*.pyc */*/*.pyc */*/*/*.pyc
 	rm -f *.warn
+	rm -f tests/dump/*
 
 veryclean: clean
 	rm -rf ./doc
@@ -163,11 +164,33 @@ docfly: veryclean html_doc
 	fi;
 	cp -r ./doc/traceback_html/* /home/anglenet/www/projects/api/traceback/
 	cp -r ./doc/elftools_html/* /home/anglenet/www/projects/api/elftools/
+	apachectl restart
 
-dump: $(TEST_PROGS)
-	readelf -a $^ > ./tests/dump
 
-test: 
-	$(CC) -S -o tests/$@.s $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
-	$(CC) -o tests/$@ $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
-	$(CC) -o tests/$@64 tests/stack_internal.c
+stack_internal: 
+	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
+	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
+	$(CC) -o tests/dump/$@64 tests/stack_internal.c
+	readelf -a tests/dump/stack_internal > tests/dump/stack_internal.dump
+	objdump -d tests/dump/stack_internal >> tests/dump/stack_internal.dump
+
+stack_internal_main:
+	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC) -o tests/dump/$@64 tests/$@.c
+	readelf -a tests/dump/$@ > tests/dump/$@.dump
+	objdump -d tests/dump/$@ >> tests/dump/$@.dump
+
+stack_internal_full:
+	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC) -o tests/dump/$@64 tests/$@.c
+	readelf -a tests/dump/$@ > tests/dump/$@.dump
+	objdump -d tests/dump/$@ >> tests/dump/$@.dump
+
+
+
+
+test: stack_internal  stack_internal_main stack_internal_full
+
+	
