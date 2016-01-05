@@ -85,14 +85,14 @@ update:
 query_update:
 	./update.sh $(UPDATE_METHOD) query
 
-%.o: %.c
+%.o: %.c 
 	@expand -t $(TABSTOP) $< | awk 'length > 80 \
 	  { err++; \
 	    errs[err] = "Warning: line " NR " in $< is longer than 80 characters"; \
 	  } END { \
 	    if (err > 2 && err < 1000) {for (i = 1; i <= err; i++) print errs[i]; system("sleep 5");}\
 	    exit(err > 10 && err < 1000) }'
-	$(CC) -c -o $@ $(CFLAGS) $(LDFLAGS) $^
+	$(CC) -g -c -o $@ $(CFLAGS) $(LDFLAGS) $^ 
 
 %.o: %.s
 	@echo 'You should use the .S file extension rather than .s'
@@ -100,17 +100,17 @@ query_update:
 	@false
 
 %.o: %.S
-	$(CC) -c -o $@ -DASSEMBLER $(CFLAGS) $(LDFLAGS) $^
+	$(CC) -g -c -o $@ -DASSEMBLER $(CFLAGS) $(LDFLAGS) $^
 
 libtraceback.a: $(TRACEBACK_OBJS)
 	$(AR) rc libtraceback.a $(TRACEBACK_OBJS)
 
 $(TEST_PROGS) tests/verify_test: %: %.o libtraceback.a
-	$(CC) -o $@ $@.o -L. libtraceback.a $(CFLAGS) $(LDFLAGS) $(LIBS) -static
+	$(CC) -g -o $@ $@.o -L. libtraceback.a $(CFLAGS) $(LDFLAGS) $(LIBS) -static
 	python ./symtabgen.py $@
 
 tests/add_one_test: tests/add_one.o tests/add_one_test.o
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC) -g -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 html_doc:
 	$(DOC) doxygen.conf
@@ -188,9 +188,7 @@ stack_internal_full:
 	readelf -a tests/dump/$@ > tests/dump/$@.dump
 	objdump -d tests/dump/$@ >> tests/dump/$@.dump
 
+test:  
 
-
-
-test: stack_internal  stack_internal_main stack_internal_full
 
 	

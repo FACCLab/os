@@ -15,7 +15,7 @@ TABSTOP = 8
 # Object files that should be linked into the traceback library
 # go here.
 #
-MY_TRACEBACK_OBJS = traceback.o
+MY_TRACEBACK_OBJS = traceback.o stack.o
 
 #
 # Specifies the method for acquiring and project updates. This should be
@@ -30,7 +30,7 @@ UPDATE_METHOD = web
 #
 # Any test programs that use the traceback function go here
 #
-TEST_PROGS = simple_test evil_test voidstar_test alarming_test
+TEST_PROGS = simple_test evil_test voidstar_test alarming_test mytest
 
 #
 # Any libs that are necessary for your test programs go here
