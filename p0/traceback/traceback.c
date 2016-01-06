@@ -37,13 +37,13 @@ void traceback(FILE *fp)
 	ASSERT(fp != NULL);
 	void *ebp;
 	int eip;
-	void *func_addr;
+	int func_addr;
 	int func_index;
 	ebp = getFirstStack();
 	while(ebp){
 		// Read Eip
 		eip = *(int *)(ebp+1);
-		func_addr = (void *)(eip + (*(int *)(eip - 4)));
+		func_addr = * (int *)(eip + (*(int *)(eip - 4)));
 		if((func_index = funcs_find((void *)func_addr)) >= 0){
 			// Found function information in functions array.
 #ifdef DEBUG
@@ -52,7 +52,7 @@ void traceback(FILE *fp)
 #endif
 		}else{
 			// Our functions array didnot hold infor about this function.
-			fprintf(fp, "Unknown %p", func_addr);	
+			fprintf(fp, "Unknown %p", (void *)func_addr);	
 		}
 		printf("ebp: %p\n", ebp);
 		break;

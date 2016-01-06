@@ -29,7 +29,7 @@ AR = ar
 
 # -O0 is needed so that gcc doesn't "helpfully" optimize the
 # calling convention for static functions.
-CFLAGS = -Wall -Werror -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
+CFLAGS = -Wall -Werror  -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
 
 # -fstack-protector
 #Emit extra code to check for buffer overflows, such as stack smashing attacks.  
@@ -72,9 +72,9 @@ TRACEBACK_OBJS = traceback/traceback_globals.o \
 				$(MY_TRACEBACK_OBJS:%=traceback/%)
 TEST_PROGS := $(TEST_PROGS:%=tests/%)
 
-.PHONY: update query_update html_doc print clean verify veryclean dump docfly test stack_internal 
+.PHONY: update query_update html_doc print clean verify veryclean dump docfly test stack_internal stack_internal_full stack_internal_main mytest2  
 
-all: $(TEST_PROGS) tests/add_one_test tests/verify_test
+all: $(TEST_PROGS) tests/add_one_test tests/verify_test test 
 
 #doupdate:
 #	./update.pl $(UPDATE_METHOD)
@@ -92,7 +92,7 @@ query_update:
 	  } END { \
 	    if (err > 2 && err < 1000) {for (i = 1; i <= err; i++) print errs[i]; system("sleep 5");}\
 	    exit(err > 10 && err < 1000) }'
-	$(CC) -g -c -o $@ $(CFLAGS) $(LDFLAGS) $^ 
+	$(CC)   -c -o $@ $(CFLAGS) $(LDFLAGS) $^ 
 
 %.o: %.s
 	@echo 'You should use the .S file extension rather than .s'
@@ -100,17 +100,23 @@ query_update:
 	@false
 
 %.o: %.S
-	$(CC) -g -c -o $@ -DASSEMBLER $(CFLAGS) $(LDFLAGS) $^
+	$(CC)   -c -o $@ -DASSEMBLER $(CFLAGS) $(LDFLAGS) $^
 
 libtraceback.a: $(TRACEBACK_OBJS)
 	$(AR) rc libtraceback.a $(TRACEBACK_OBJS)
 
 $(TEST_PROGS) tests/verify_test: %: %.o libtraceback.a
-	$(CC) -g -o $@ $@.o -L. libtraceback.a $(CFLAGS) $(LDFLAGS) $(LIBS) -static
+	$(CC)   -o $@ $@.o -L. libtraceback.a $(CFLAGS) $(LDFLAGS) $(LIBS) -static
 	python ./symtabgen.py $@
+	readelf -a $@ > $@.dump
+	objdump -d $@ >> $@.dump
+	#./$@
+
 
 tests/add_one_test: tests/add_one.o tests/add_one_test.o
-	$(CC) -g -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC)   -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	readelf -a $@ > $@.dump
+	objdump -d $@ >> $@.dump
 
 html_doc:
 	$(DOC) doxygen.conf
@@ -134,6 +140,7 @@ clean:
 	rm -f */*.pyc */*/*.pyc */*/*/*.pyc
 	rm -f *.warn
 	rm -f tests/dump/*
+	rm -f tests/*.dump
 
 veryclean: clean
 	rm -rf ./doc
@@ -167,28 +174,14 @@ docfly: veryclean html_doc
 	apachectl restart
 
 
-stack_internal: 
-	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
-	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/stack_internal.c
-	$(CC) -o tests/dump/$@64 tests/stack_internal.c
-	readelf -a tests/dump/stack_internal > tests/dump/stack_internal.dump
-	objdump -d tests/dump/stack_internal >> tests/dump/stack_internal.dump
-
-stack_internal_main:
-	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC) -o tests/dump/$@64 tests/$@.c
+stack_internal stack_internal_main stack_internal_full mytest2:
+	$(CC)   -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC)   -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC)   -o tests/dump/$@64 tests/$@.c
 	readelf -a tests/dump/$@ > tests/dump/$@.dump
 	objdump -d tests/dump/$@ >> tests/dump/$@.dump
 
-stack_internal_full:
-	$(CC) -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC) -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC) -o tests/dump/$@64 tests/$@.c
-	readelf -a tests/dump/$@ > tests/dump/$@.dump
-	objdump -d tests/dump/$@ >> tests/dump/$@.dump
-
-test:  
+test: stack_internal stack_internal_main stack_internal_full mytest2  
 
 
 	
