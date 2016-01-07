@@ -28,7 +28,7 @@ void traceback(FILE *);
  *
  * @return The last function call's ebp address.
  */
-void *getFirstStack();
+int getFirstStack();
 
 
 /**

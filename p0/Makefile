@@ -29,7 +29,7 @@ AR = ar
 
 # -O0 is needed so that gcc doesn't "helpfully" optimize the
 # calling convention for static functions.
-CFLAGS = -Wall -Werror  -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
+CFLAGS = -DDEBUG -Wall -Werror  -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
 
 # -fstack-protector
 #Emit extra code to check for buffer overflows, such as stack smashing attacks.  

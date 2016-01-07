@@ -12,7 +12,6 @@
 
 #include "contracts.h"
 #include "traceback_internal.h"
-extern void *getFirstStack();
 
 int funcs_find(void *addr){
 	ASSERT(addr != NULL);
@@ -23,7 +22,7 @@ int funcs_find(void *addr){
 		}
 		index++;
 	}
-	return 0;
+	return -1;
 }
 
 void traceback(FILE *fp)
@@ -35,28 +34,27 @@ void traceback(FILE *fp)
 
 	/* remove this line once you've got real code here */
 	ASSERT(fp != NULL);
-	void *ebp;
+	int ebp;
 	int eip;
 	int func_addr;
 	int func_index;
 	ebp = getFirstStack();
 	while(ebp){
 		// Read Eip
-		eip = *(int *)(ebp+1);
-		func_addr = * (int *)(eip + (*(int *)(eip - 4)));
+		eip = *(int *)(ebp+4);
+		func_addr = eip + (*(int *)(eip - 4));
 		if((func_index = funcs_find((void *)func_addr)) >= 0){
 			// Found function information in functions array.
 #ifdef DEBUG
-			fprintf(stdout, "Found function %p at [%d]", 
-					func_addr, func_index);
+			fprintf(fp, "Found function %s(%p) at [%d]\n", 
+					functions[func_index].name, (void *)func_addr, func_index);
+			fflush(fp);
 #endif
 		}else{
 			// Our functions array didnot hold infor about this function.
-			fprintf(fp, "Unknown %p", (void *)func_addr);	
+			fprintf(fp, "Unknown %p\n", (void *)func_addr);	
 		}
-		printf("ebp: %p\n", ebp);
-		break;
-		//ebp =(void *) *ebp;
+		ebp = * (int *)ebp;
 	}
 }
 
