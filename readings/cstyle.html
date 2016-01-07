@@ -1,0 +1,2574 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 6 November 2007), see www.w3.org">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+
+<title>Recommended C Style and Coding Standards</title>
+<meta content="DocBook XSL-NS Stylesheets V1.74.0" name="generator">
+<meta name="description" content=
+"This document is an updated version of the Indian Hill C Style and Coding Standards paper, with modifications by the last three authors. It describes a recommended coding standard for C programs. The scope is coding style, not functional organization.">
+
+<style type="text/css">
+ body {
+  background-color: white;
+  color: black;
+ }
+ :link { color: #0000FF }
+ :visited { color: #840084 }
+ :active { color: #0000FF }
+ h2.c3 {clear: both}
+ p.c2 {font-weight: bold}
+ span.c1 {white-space: pre;}
+</style>
+</head>
+
+<body>
+<div class="article" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h1 class="title"><a name="N10001" id="N10001"></a> Recommended C Style and
+Coding Standards</h1>
+</div>
+
+<div class="authorgroup">
+<div class="author">
+<h3 class="author"><span class="firstname">L.W.</span> <span class=
+"surname">Cannon</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">R.A.</span> <span class=
+"surname">Elliott</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">L.W.</span> <span class=
+"surname">Kirchhoff</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">J.H.</span> <span class=
+"surname">Miller</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">J.M.</span> <span class=
+"surname">Milner</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">R.W.</span> <span class=
+"surname">Mitze</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">E.P.</span> <span class=
+"surname">Schan</span></h3>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">N.O.</span> <span class=
+"surname">Whittington</span></h3>
+
+<div class="affiliation">
+<span class="orgname">Bell Labs
+<br></span>
+</div>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">Henry</span> <span class=
+"surname">Spencer</span></h3>
+
+<div class="affiliation">
+<span class="orgname">Zoology Computer Systems University of Toronto
+<br></span>
+</div>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">David</span> <span class=
+"surname">Keppel</span></h3>
+
+<div class="affiliation">
+<span class="orgname">EECS, UC Berkeley CS&amp;E, University of Washington
+<br></span>
+</div>
+</div>
+
+<div class="author">
+<h3 class="author"><span class="firstname">Mark</span> <span class=
+"surname">Brader</span></h3>
+
+<div class="affiliation">
+<span class="orgname">SoftQuad Incorporated
+<br></span>
+
+<div class="address">
+<p><span class="c1">Toronto</span></p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="abstract">
+<p class="title c2">Abstract</p>
+
+<p>This document is an updated version of the <span class="emphasis"><em>Indian
+Hill C Style and Coding Standards</em></span> paper, with modifications by the
+last three authors. It describes a recommended coding standard for C programs.
+The scope is coding style, not functional organization.</p>
+</div>
+</div>
+<hr>
+</div>
+
+<div class="toc">
+<p class="c2">Table of Contents</p>
+
+<dl>
+<dt><span class="section"><a href="#N10069">Introduction</a></span></dt>
+
+<dt><span class="section"><a href="#N1007C">File Organization</a></span></dt>
+
+<dd>
+<dl>
+<dt><span class="section"><a href="#N10081">File Naming
+Conventions</a></span></dt>
+
+<dt><span class="section"><a href="#N100D8">Program Files</a></span></dt>
+
+<dt><span class="section"><a href="#N100F0">Header Files</a></span></dt>
+</dl>
+</dd>
+
+<dt><span class="section"><a href="#N10126">Comments</a></span></dt>
+
+<dt><span class="section"><a href="#N10180">Declarations</a></span></dt>
+
+<dd>
+<dl>
+<dt><span class="section"><a href="#N10203">Function
+Declarations</a></span></dt>
+
+<dt><span class="section"><a href="#N10247">Whitespace</a></span></dt>
+
+<dt><span class="section"><a href="#N1026F">Examples</a></span></dt>
+</dl>
+</dd>
+
+<dt><span class="section"><a href="#N1027A">Simple Statements</a></span></dt>
+
+<dt><span class="section"><a href="#N10325">Compound Statements</a></span></dt>
+
+<dt><span class="section"><a href="#N103D8">Operators</a></span></dt>
+
+<dt><span class="section"><a href="#N103FD">Naming Conventions</a></span></dt>
+
+<dt><span class="section"><a href="#N10441">Constants</a></span></dt>
+
+<dd>
+<dl>
+<dt><span class="section"><a href="#N10488">Macros</a></span></dt>
+
+<dt><span class="section"><a href="#N104E0">Conditional
+Compilation.</a></span></dt>
+
+<dt><span class="section"><a href="#N10515">Debugging</a></span></dt>
+
+<dt><span class="section"><a href="#N10553">Portability</a></span></dt>
+
+<dt><span class="section"><a href="#N10848">ANSI C</a></span></dt>
+
+<dt><span class="section"><a href="#N1084D">Compatibility</a></span></dt>
+
+<dt><span class="section"><a href="#N108BC">Formatting</a></span></dt>
+
+<dt><span class="section"><a href="#N108DC">Prototypes</a></span></dt>
+
+<dt><span class="section"><a href="#N10940">Pragmas</a></span></dt>
+
+<dt><span class="section"><a href="#N1095E">Special
+Considerations</a></span></dt>
+
+<dt><span class="section"><a href="#N109BD">Lint</a></span></dt>
+</dl>
+</dd>
+</dl>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N10069" id="N10069"></a> Introduction</h2>
+</div>
+
+<p>This document is a modified version of a document from a committee formed at
+AT&amp;T's Indian Hill labs to establish a common set of coding standards and
+recommendations for the Indian Hill community. The scope of this work is C
+coding style. Good style should encourage consistent layout, improve
+portability, and reduce errors. This work does not cover functional
+organization, or general issues such as the use of <span class=
+"emphasis"><em>goto</em></span>s. We( The opinions in this document do not
+reflect the opinions of all authors. This is still an evolving document. Please
+send comments and suggestions to pardo@cs.washington.edu or
+{rutgers,cornell,ucsd,ubc-cs,tektronix}!uw-beaver!june!pardo) have tried to
+combine previous work [1,6,8] on C style into a uniform set of standards that
+should be appropriate for any project using C, although parts are biased
+towards particular systems. Of necessity, these standards cannot cover all
+situations. Experience and informed judgement count for much. Programmers who
+encounter unusual situations should consult either experienced C programmers or
+code written by experienced C programmers (preferably following these
+rules).</p>
+
+<p>The standards in this document are not of themselves required, but
+individual institutions or groups may adopt part or all of them as a part of
+program acceptance. It is therefore likely that others at your institution will
+code in a similar style. Ultimately, the goal of these standards is to increase
+portability, reduce maintenance, and above all improve clarity.</p>
+
+<p>Many of the style choices here are somewhat arbitrary. Mixed coding style is
+harder to maintain than bad coding style. When changing existing code it is
+better to conform to the style (indentation, spacing, commenting, naming
+conventions) of the existing code than it is to blindly follow this
+document.</p>
+
+<p>"<span class="emphasis"><em>To be clear is professional; not to be clear is
+unprofessional.</em></span>" -- Sir Ernest Gowers.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N1007C" id="N1007C"></a>File Organization</h2>
+</div>
+
+<p>A file consists of various sections that should be separated by several
+blank lines. Although there is no maximum length limit for source files, files
+with more than about 1000 lines are cumbersome to deal with. The editor may not
+have enough temp space to edit the file, compilations will go more slowly, etc.
+Many rows of asterisks, for example, present little information compared to the
+time it takes to scroll past, and are discouraged. Lines longer than 79 columns
+are not handled well by all terminals and should be avoided if possible.
+Excessively long lines which result from deep indenting are often a symptom of
+poorly-organized code.</p>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10081" id="N10081"></a>File Naming Conventions</h3>
+</div>
+
+<p>File names are made up of a base name, and an optional period and suffix.
+The first character of the name should be a letter and all characters (except
+the period) should be lower-case letters and numbers. The base name should be
+eight or fewer characters and the suffix should be three or fewer characters
+(four, if you include the period). These rules apply to both program files and
+default files used and produced by the program (e.g., "rogue.sav").</p>
+
+<p>Some compilers and tools require certain suffix conventions for names of
+files [5]. The following suffixes are required:</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>C source file names must end in <code class="filename">.c</code></p>
+</li>
+
+<li>
+<p>Assembler source file names must end in <code class="filename">.s</code></p>
+</li>
+
+<li>
+<p>The following conventions are universally followed:</p>
+
+<div class="itemizedlist">
+<ul type="circle">
+<li>
+<p>Relocatable object file names end in <code class="filename">.o</code></p>
+</li>
+
+<li>
+<p>Include header file names end in <code class="filename">.h</code>. An
+alternate convention that may be preferable in multi-language environments is
+to suffix both the language type and <code class="filename">.h</code> (e.g.
+<code class="filename">foo.c.h</code>; or <code class=
+"filename">foo.ch</code>).</p>
+</li>
+
+<li>
+<p>Yacc source file names end in <code class="filename">.y</code></p>
+</li>
+
+<li>
+<p>Lex source file names end in <code class="filename">.l</code></p>
+</li>
+</ul>
+</div>
+</li>
+
+<li>
+<p>C++ has compiler-dependent suffix conventions, including <code class=
+"filename">.c</code>, <code class="filename">..c</code>, <code class=
+"filename">.cc</code>, <code class="filename">.c.c</code>, and <code class=
+"filename">.C</code>. Since much C code is also C++ code, there is no clear
+solution here.</p>
+
+<p>In addition, it is conventional to use <code class=
+"filename">Makefile</code> (not <code class="filename">makefile</code>) for the
+control file for <span class="command"><strong>make</strong></span> (for
+systems that support it) and "README" for a summary of the contents of the
+directory or directory tree.</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N100D8" id="N100D8"></a>Program Files</h3>
+</div>
+
+<p>The suggested order of sections for a program file is as follows</p>
+
+<div class="orderedlist">
+<ol type="1">
+<li>
+<p>First in the file is a prologue that tells what is in that file. A
+description of the purpose of the objects in the files (whether they be
+functions, external data declarations or definitions, or something else) is
+more useful than a list of the object names. The prologue may optionally
+contain author(s), revision control information, references, etc.</p>
+</li>
+
+<li>
+<p>Any header file includes should be next. If the include is for a non-obvious
+reason, the reason should be commented. In most cases, system include files
+like <code class="filename">stdio.h</code> should be included before user
+include files.</p>
+</li>
+
+<li>
+<p>Any defines and typedefs that apply to the file as a whole are next. One
+normal order is to have "constant" macros first, then "function" macros, then
+typedefs and enums.</p>
+</li>
+
+<li>
+<p>Next come the global (external) data declarations, usually in the order:
+externs, non-static globals, static globals. If a set of defines applies to a
+particular piece of global data (such as a flags word), the defines should be
+immediately after the data declaration or embedded in structure declarations,
+indented to put the defines one level deeper than the first keyword of the
+declaration to which they apply.</p>
+</li>
+
+<li>
+<p>The functions come last, and should be in some sort of meaningful order.
+Like functions should appear together. A "breadth-first" approach (functions on
+a similar level of abstraction together) is preferred over depth-first
+(functions defined as soon as possible before or after their calls).
+Considerable judgement is called for here. If defining large numbers of
+essentially-independent utility functions, consider alphabetical order.</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N100F0" id="N100F0"></a>Header Files</h3>
+</div>
+
+<p>Header files are files that are included in other files prior to compilation
+by the C preprocessor. Some, such as <code class="filename">stdio.h</code>, are
+defined at the system level and must included by any program using the standard
+I/O library. Header files are also used to contain data declarations and
+defines that are needed by more than one program. Header files should be
+functionally organized, i.e., declarations for separate subsystems should be in
+separate header files. Also, if a set of declarations is likely to change when
+code is ported from one machine to another, those declarations should be in a
+separate header file.</p>
+
+<p>Avoid private header filenames that are the same as library header
+filenames. The statement <code class="code">#include</code> <code class=
+"filename">"math.h"</code> will include the standard library math header file
+if the intended one is not found in the current directory. If this is what you
+<span class="emphasis"><em>want</em></span> to happen, comment this fact. Don't
+use absolute pathnames for header files. Use the <span class=
+"emphasis"><em>&lt;name&gt;</em></span> construction for getting them from a
+standard place, or define them relative to the current directory. The
+"include-path" option of the C compiler (-I on many systems) is the best way to
+handle extensive private libraries of header files; it permits reorganizing the
+directory structure without having to alter source files.</p>
+
+<p>Header files that declare functions or external variables should be included
+in the file that defines the function or variable. That way, the compiler can
+do type checking and the external declaration will always agree with the
+definition.</p>
+
+<p>Defining variables in a header file is often a poor idea. Frequently it is a
+symptom of poor partitioning of code between files. Also, some objects like
+typedefs and initialized data definitions cannot be seen twice by the compiler
+in one compilation. On some systems, repeating uninitialized declarations
+without the <code class="code">extern</code> keyword also causes problems.
+Repeated declarations can happen if include files are nested and will cause the
+compilation to fail.</p>
+
+<p>Header files should not be nested. The prologue for a header file should,
+therefore, describe what other headers need to be #included for the header to
+be functional. In extreme cases, where a large number of header files are to be
+included in several different source files, it is acceptable to put all common
+#includes in one include file.</p>
+
+<p>It is common to put the following into each <code class="filename">.h</code>
+file to prevent accidental double-inclusion.</p>
+<pre class="programlisting">
+    #ifndef EXAMPLE_H
+      #define EXAMPLE_H
+      ... <span class="emphasis"><em>/* body of example.h file */</em></span>
+      #endif /* EXAMPLE_H */
+    
+</pre>
+
+<p>This double-inclusion mechanism should not be relied upon, particularly to
+perform nested includes.</p>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h4 class="title"><a name="N1011E" id="N1011E"></a>Other Files</h4>
+</div>
+
+<p>It is conventional to have a file called <code class=
+"filename">README</code> to document both "the bigger picture" and issues for
+the program as a whole. For example, it is common to include a list of all
+conditional compilation flags and what they mean. It is also common to list
+files that are machine dependent, etc.</p>
+</div>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N10126" id="N10126"></a>Comments</h2>
+</div>
+
+<p>"<span class="emphasis"><em>When the code and the comments disagree, both
+are probably wrong.</em></span>" -- Norm Schryer</p>
+
+<p>The comments should describe <span class="emphasis"><em>what</em></span> is
+happening, <span class="emphasis"><em>how</em></span> it is being done, what
+parameters mean, which globals are used and which are modified, and any
+restrictions or bugs. Avoid, however, comments that are clear from the code, as
+such information rapidly gets out of date. Comments that disagree with the code
+are of negative value. Short comments should be <span class=
+"emphasis"><em>what</em></span> comments, such as "compute mean value", rather
+than <span class="emphasis"><em>how</em></span> comments such as "sum of values
+divided by n". C is not assembler; putting a comment at the top of a 3-10 line
+section telling what it does overall is often more useful than a comment on
+each line describing micrologic.</p>
+
+<p>Comments should justify offensive code. The justification should be that
+something bad will happen if unoffensive code is used. Just making code faster
+is not enough to rationalize a hack; the performance must be <span class=
+"emphasis"><em>shown</em></span> to be unacceptable without the hack. The
+comment should explain the unacceptable behavior and describe why the hack is a
+"good" fix.</p>
+
+<p>Comments that describe data structures, algorithms, etc., should be in block
+comment form with the opening <code class="literal">/*</code> in columns 1-2, a
+<code class="literal">*</code> in column 2 before each line of comment text,
+and the closing <code class="literal">*/</code> in columns 2-3. An alternative
+is to have <code class="literal">**</code> in columns 1-2, and put the closing
+<code class="literal">*/</code> also in 1-2.</p>
+<pre class="programlisting">
+   /*
+    * Here is a block comment.
+    * The comment text should be tabbed or spaced over uniformly.
+    * The opening slash-star and closing star-slash are alone on a line.
+    */
+</pre>
+<pre class="programlisting">
+   /*
+   ** Alternate format for block comments
+   */
+</pre>
+
+<p>Note that <span class="emphasis"><em>grep '^.\*'</em></span> will catch all
+block comments in the file.</p>
+
+<div class="orderedlist">
+<ol type="1">
+<li>
+<p>Some automated program-analysis packages use different characters before
+comment lines as a marker for lines with specific items of information. In
+particular, a line with a '<code class="literal">-</code>' in a comment
+preceding a function is sometimes assumed to be a one-line summary of the
+function's purpose. Very long block comments such as drawn-out discussions and
+copyright notices often start with <code class="literal">/*</code> in columns
+1-2, no leading <code class="literal">*</code> before lines of text, and the
+closing <code class="literal">*/</code> in columns 1-2. Block comments inside a
+function are appropriate, and they should be tabbed over to the same tab
+setting as the code that they describe. One-line comments alone on a line
+should be indented to the tab setting of the code that follows.</p>
+<pre class="programlisting">
+   if (argc&gt; 1) {
+    /* Get input file from command line. */
+    if (freopen(argv[1], "r", stdin) == NULL) {
+     perror (argv[1]);
+    }
+   }
+</pre>Very short comments may appear on the same line as the code they
+describe, and should be tabbed over to separate them from the statements. If
+more than one short comment appears in a block of code they should all be
+tabbed to the same tab setting.
+<pre class="programlisting">
+   if (a == EXCEPTION) {
+    b = TRUE;    /* special case */
+   } else {
+    b = isprime(a);   /* works only for odd a */
+   }
+</pre>
+</li>
+</ol>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N10180" id="N10180"></a>Declarations</h2>
+</div>
+
+<p>Global declarations should begin in column 1. All external data declaration
+should be preceded by the <code class="code">extern</code> keyword. If an
+external variable is an array that is defined with an explicit size, then the
+array bounds must be repeated in the extern declaration unless the size is
+always encoded in the array (e.g., a read-only character array that is always
+null-terminated). Repeated size declarations are particularly beneficial to
+someone picking up code written by another.</p>
+
+<p>The "pointer" qualifier, '<code class="literal">*</code>', should be with
+the variable name rather than with the type.</p>
+<pre class="programlisting">
+   char  *s, *t, *u;
+</pre>instead of
+<pre class="programlisting">
+   char* s, t, u;
+</pre>which is wrong, since '<code class="varname">t</code>' and '<code class=
+"varname">u</code>' do not get declared as pointers.
+
+<p>Unrelated declarations, even of the same type, should be on separate lines.
+A comment describing the role of the object being declared should be included,
+with the exception that a list of <code class="code">#define</code>d constants
+do not need comments if the constant names are sufficient documentation. The
+names, values, and comments are usually tabbed so that they line up underneath
+each other. Use the tab character rather than blanks (spaces). For structure
+and union template declarations, each element should be alone on a line with a
+comment describing it. The opening brace (<code class="code">{</code>) should
+be on the same line as the structure tag, and the closing brace (<code class=
+"code">}</code>) should be in column 1.</p>
+<pre class="programlisting">
+   struct boat {
+    int  wllength; /* water line length in meters */
+    int  type;  /* see below */
+    long  sailarea; /* sail area in square mm */
+   };
+   /* defines for boat.type */
+   #define KETCH (1)
+   #define YAWL  (2)
+   #define SLOOP (3)
+   #define SQRIG (4)
+   #define MOTOR (5)
+</pre>These defines are sometimes put right after the declaration of
+<code class="literal">type</code>, within the <code class=
+"literal">struct</code> declaration, with enough tabs after the '<code class=
+"literal">#</code>' to indent <code class="literal">define</code> one level
+more than the structure member declarations. When the actual values are
+unimportant, the <span class="emphasis"><em>enum</em></span> facility is
+better.
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p><span class="emphasis"><em>enum</em></span>s might be better anyway.</p>
+<pre class="programlisting">
+   
+enum bt { KETCH=1, YAWL, SLOOP, SQRIG, MOTOR };
+   struct boat {
+    int  wllength; /* water line length in meters */
+    enum bt type;  /* what kind of boat */
+    long  sailarea; /* sail area in square mm */
+   };
+</pre>
+</li>
+
+<li>
+<p>Any variable whose initial value is important should be <span class=
+"emphasis"><em>explicitly</em></span> initialized, or at the very least should
+be commented to indicate that C's default initialization to zero is being
+relied upon. The empty initializer, "<code class="literal">{}</code>", should
+never be used. Structure initializations should be fully parenthesized with
+braces. Constants used to initialize longs should be explicitly long. Use
+capital letters; for example two long "<code class="literal">2l</code>" looks a
+lot like "<code class="literal">21</code>", the number twenty-one.</p>
+<pre class="programlisting">
+   int  x = 1;
+   char  *msg = "message";
+   struct boat winner[] = {
+    { 40, YAWL, 6000000L },
+    { 28, MOTOR, 0L },
+    { 0 },
+   };
+</pre>
+</li>
+</ul>
+</div>
+
+<p>In any file which is part of a larger whole rather than a self-contained
+program, maximum use should be made of the <span class=
+"emphasis"><em>static</em></span> keyword to make functions and variables local
+to single files. Variables in particular should be accessible from other files
+only when there is a clear need that cannot be filled in another way. Such
+usage should be commented to make it clear that another file's variables are
+being used; the comment should name the other file. If your debugger hides
+static objects you need to see during debugging, declare them as <code class=
+"literal">STATIC</code> and #define <code class="literal">STATIC</code> as
+needed.</p>
+
+<p>The most important types should be highlighted by typedeffing them, even if
+they are only integers, as the unique name makes the program easier to read (as
+long as there are only a <span class="emphasis"><em>few</em></span> things
+typedeffed to integers!). Structures may be typedeffed when they are declared.
+Give the struct and the typedef the same name.</p>
+<pre class="programlisting">
+ 
+  typedef struct splodge_t {
+    int sp_count;
+    char *sp_name, *sp_alias;
+   } splodge_t;
+</pre>
+
+<p>The return type of functions should always be declared. If function
+prototypes are available, use them. One common mistake is to omit the
+declaration of external math functions that return <span class=
+"emphasis"><em>double</em></span>. The compiler then assumes that the return
+value is an integer and the bits are dutifully converted into a (meaningless)
+floating point value.</p>
+
+<p>"<span class="emphasis"><em>C takes the point of view that the programmer is
+always right.</em></span>" -- Michael DeCorte"</p>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10203" id="N10203"></a> Function Declarations</h3>
+</div>
+
+<p>Each function should be preceded by a block comment prologue that gives a
+short description of what the function does and (if not clear) how to use it.
+Discussion of non-trivial design decisions and side-effects is also
+appropriate. Avoid duplicating information clear from the code.</p>
+
+<p>The function return type should be alone on a line, (optionally) indented
+one stop4.</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>"Tabstops" can be blanks (spaces) inserted by your editor in clumps of 2, 4,
+or 8. Use actual tabs where possible. Do not default to <span class=
+"emphasis"><em>int</em></span>; if the function does not return a value then it
+should be given return type <span class="emphasis"><em>void</em></span>.</p>
+</li>
+
+<li>
+<p><code class="literal">#define</code> <code class="literal">void</code> or
+<code class="literal">#define</code> <code class="literal">void</code>
+<code class="literal">int</code> for compilers without the <span class=
+"emphasis"><em>void</em></span> keyword. If the value returned requires a long
+explanation, it should be given in the prologue; otherwise it can be on the
+same line as the return type, tabbed over. The function name (and the formal
+parameter list) should be alone on a line, in column 1. Destination (return
+value) parameters should generally be first (on the left). All formal parameter
+declarations, local declarations and code within the function body should be
+tabbed over one stop. The opening brace of the function body should be alone on
+a line beginning in column 1.</p>
+
+<p>Each parameter should be declared (do not default to <span class=
+"emphasis"><em>int</em></span>). In general the role of each variable in the
+function should be described. This may either be done in the function comment
+or, if each declaration is on its own line, in a comment on that line. Loop
+counters called "i", string pointers called "s", and integral types called "c"
+and used for characters are typically excluded. If a group of functions all
+have a like parameter or local variable, it helps to call the repeated variable
+by the same name in all functions. (Conversely, avoid using the same name for
+different purposes in related functions.) Like parameters should also appear in
+the same place in the various argument lists.</p>
+
+<p>Comments for parameters and local variables should be tabbed so that they
+line up underneath each other. Local variable declarations should be separated
+from the function's statements by a blank line.</p>
+
+<p>Be careful when you use or declare functions that take a variable number of
+arguments ("varargs"). There is no truly portable way to do varargs in C.
+Better to design an interface that uses a fixed number of arguments. If you
+must have varargs, use the library macros for declaring functions with variant
+argument lists.</p>
+
+<p>If the function uses any external variables (or functions) that are not
+declared globally in the file, these should have their own declarations in the
+function body using the <span class="emphasis"><em>extern</em></span>
+keyword.</p>
+
+<p>Avoid local declarations that override declarations at higher levels. In
+particular, local variables should not be redeclared in nested blocks. Although
+this is valid C, the potential confusion is enough that <span class=
+"emphasis"><em>lint</em></span> will complain about it when given the -h
+option.</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10247" id="N10247"></a>Whitespace</h3>
+</div>
+<pre class="programlisting">
+<span class=
+"emphasis"><em>int i;main(){for(;i["]&lt;i;++i){--i;}"];read('-'-'-',i+++"hell\
+o, world!\n",'/'/'/'));}read(j,i,p){write(j/p+p,i---j,i/i);}</em></span>
+-- Dishonorable mention, Obfuscated C Code Contest, 1984.
+    
+</pre>Author requested anonymity.
+
+<p>Use vertical and horizontal whitespace generously. Indentation and spacing
+should reflect the block structure of the code; e.g., there should be at least
+2 blank lines between the end of one function and the comments for the
+next.</p>
+
+<p>A long string of conditional operators should be split onto separate
+lines.</p>
+<pre class="programlisting">
+   if (foo-&gt;next==NULL &amp;&amp; totalcount&lt;needed &amp;&amp; needed&lt;=MAX_ALLOT
+    &amp;&amp; server_active(current_input)) { ...
+</pre>Might be better as
+<pre class="programlisting">
+   if (foo-&gt;next == NULL
+    &amp;&amp; totalcount &lt; needed &amp;&amp; needed &lt;= MAX_ALLOT
+    &amp;&amp; server_active(current_input))
+   {
+    ...
+</pre>Similarly, elaborate <span class="emphasis"><em>for</em></span> loops
+should be split onto different lines.
+<pre class="programlisting">
+   for (curr = *listp, trail = listp;
+    curr != NULL;
+    trail = &amp;(curr-&gt;next), curr = curr-&gt;next )
+   {
+    ...
+</pre>Other complex expressions, particularly those using the ternary
+<span class="emphasis"><em>?:</em></span> operator, are best split on to
+several lines, too.
+<pre class="programlisting">
+   c = (a == b)
+    ? d + f(a)
+    : f(b) - d;
+</pre>Keywords that are followed by expressions in parentheses should be
+separated from the left parenthesis by a blank. (The <span class=
+"emphasis"><em>sizeof</em></span> operator is an exception.) Blanks should also
+appear after commas in argument lists to help separate the arguments visually.
+On the other hand, macro definitions with arguments must not have a blank
+between the name and the left parenthesis, otherwise the C preprocessor will
+not recognize the argument list.
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N1026F" id="N1026F"></a>Examples</h3>
+</div>
+<pre class="programlisting">
+   /*
+    * Determine if the sky is blue by checking that it isn't night.
+    * CAVEAT: Only sometimes right.  May return TRUE when the answer
+    * is FALSE.  Consider clouds, eclipses, short days.
+    * NOTE: Uses 'hour' from 'hightime.c'.  Returns 'int' for
+    * compatibility with the old version.
+    */
+    int      /* true or false */
+   skyblue()
+   {
+    extern int hour;  /* current hour of the day */
+    return (hour&gt;= MORNING &amp;&amp; hour &lt;= EVENING);
+   }
+</pre>
+<pre class="programlisting">
+   /*
+    * Find the last element in the linked list
+    * pointed to by nodep and return a pointer to it.
+    * Return NULL if there is no last element.
+    */
+    node_t *
+   tail(nodep)
+    node_t *nodep;   /* pointer to head of list */
+   {
+    register node_t *np;  /* advances to NULL */
+    register node_t *lp;  /* follows one behind np */
+    if (nodep == NULL)
+     return (NULL);
+    for (np = lp = nodep; np != NULL; lp = np, np = np-&gt;next)
+     ; /* VOID */
+    return (lp);
+   }
+    
+</pre>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N1027A" id="N1027A"></a> Simple Statements</h2>
+</div>
+
+<p>There should be only one statement per line unless the statements are very
+closely related.</p>
+<pre class="programlisting">
+   
+case FOO:   oogle (zork);  boogle (zork);  break;
+   case BAR:   oogle (bork);  boogle (zork);  break;
+   case BAZ:   oogle (gork);  boogle (bork);  break;
+</pre>The null body of a <span class="emphasis"><em>for</em></span> or
+<span class="emphasis"><em>while</em></span> loop should be alone on a line and
+commented so that it is clear that the null body is intentional and not missing
+code.
+<pre class="programlisting">
+   while (*dest++ = *src++)
+    ; /* VOID */
+</pre>
+
+<p>Do not default the test for non-zero, i.e.</p>
+<pre class="programlisting">
+   if (f() != FAIL)
+</pre>is better than
+<pre class="programlisting">
+   if (f())
+</pre>even though <code class="literal">FAIL</code> may have the value 0 which
+C considers to be false. An explicit test will help you out later when somebody
+decides that a failure return should be -1 instead of 0. Explicit comparison
+should be used even if the comparison value will never change; e.g.,
+"<code class="literal">if (!(bufsize % sizeof(int)))</code>" should be written
+instead as "<code class="literal">if ((bufsize % sizeof(int)) == 0)</code>" to
+reflect the <span class="emphasis"><em>numeric</em></span> (not <span class=
+"emphasis"><em>boolean</em></span>) nature of the test. A frequent trouble spot
+is using <code class="literal">strcmp</code> to test for string equality, where
+the result should <span class="emphasis"><em>never</em></span> <span class=
+"emphasis"><em>ever</em></span> be defaulted. The preferred approach is to
+define a macro <span class="emphasis"><em>STREQ</em></span>.
+<pre class="programlisting">
+   #define STREQ(a, b) (strcmp((a), (b)) == 0)
+</pre>
+
+<p>The non-zero test <span class="emphasis"><em>is</em></span> often defaulted
+for predicates and other functions or expressions which meet the following
+restrictions:</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>Evaluates to 0 for false, nothing else.</p>
+</li>
+
+<li>
+<p>Is named so that the meaning of (say) a 'true' return is absolutely obvious.
+Call a predicate <span class="emphasis"><em>isvalid</em></span> or <span class=
+"emphasis"><em>valid</em></span>, not <span class=
+"emphasis"><em>checkvalid</em></span>.</p>
+
+<p>It is common practice to declare a boolean type "<code class=
+"literal">bool</code>" in a global include file. The special names improve
+readability immensely.</p>
+<pre class="programlisting">
+   typedef int bool;
+   #define FALSE 0
+   #define TRUE 1
+</pre>or
+<pre class="programlisting">
+   typedef enum { NO=0, YES } bool;
+</pre>Even with these declarations, do not check a boolean value for equality
+with 1 (TRUE, YES, etc.); instead test for inequality with 0 (FALSE, NO, etc.).
+Most functions are guaranteed to return 0 if false, but only non-zero if true.
+Thus,
+<pre class="programlisting">
+   if (func() == TRUE) { ...
+</pre>must be written
+<pre class="programlisting">
+   if (func() != FALSE) { ...
+</pre>It is even better (where possible) to rename the function/variable or
+rewrite the expression so that the meaning is obvious without a comparison to
+true or false (e.g., rename to <span class=
+"emphasis"><em>isvalid()</em></span>).
+</li>
+</ul>
+</div>
+
+<p>There is a time and a place for embedded assignment statements. In some
+constructs there is no better way to accomplish the results without making the
+code bulkier and less readable.</p>
+<pre class="programlisting">
+   while ((c = getchar()) != EOF) {
+    process the character
+   }
+</pre>The <code class="literal">++</code> and <code class="literal">--</code>
+operators count as assignment statements. So, for many purposes, do functions
+with side effects. Using embedded assignment statements to improve run-time
+performance is also possible. However, one should consider the tradeoff between
+increased speed and decreased maintainability that results when embedded
+assignments are used in artificial places. For example,
+<pre class="programlisting">
+   a = b + c;
+   d = a + r;
+</pre>should not be replaced by
+<pre class="programlisting">
+   d = (a = b + c) + r;
+</pre>even though the latter may save one cycle. In the long run the time
+difference between the two will decrease as the optimizer gains maturity, while
+the difference in ease of maintenance will increase as the human memory of
+what's going on in the latter piece of code begins to fade.
+
+<p>Goto statements should be used sparingly, as in any well-structured code.
+The main place where they can be usefully employed is to break out of several
+levels of <span class="emphasis"><em>switch</em></span>, <span class=
+"emphasis"><em>for</em></span>, and <span class=
+"emphasis"><em>while</em></span> nesting, although the need to do such a thing
+may indicate that the inner constructs should be broken out into a separate
+function, with a success/failure return code.</p>
+<pre class="programlisting">
+    for (...) {
+     while (...) {
+      ...
+      if (disaster)
+       goto error;
+    
+     }
+    }
+    ...
+   error:
+    clean up the mess
+</pre>When a <span class="emphasis"><em>goto</em></span> is necessary the
+accompanying label should be alone on a line and tabbed one stop to the left of
+the code that follows. The goto should be commented (possibly in the block
+header) as to its utility and purpose. <span class=
+"emphasis"><em>Continue</em></span> should be used sparingly and near the top
+of the loop. <span class="emphasis"><em>Break</em></span> is less troublesome.
+
+<p>parameters to non-prototyped functions sometimes need to be promoted
+explicitly. If, for example, a function expects a 32-bit <span class=
+"emphasis"><em>long</em></span> and gets handed a 16-bit <span class=
+"emphasis"><em>int</em></span> instead, the stack can get misaligned. Problems
+occur with pointer, integral, and floating-point values.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N10325" id="N10325"></a>Compound Statements</h2>
+</div>
+
+<p>A compound statement is a list of statements enclosed by braces. There are
+many common ways of formatting the braces. Be consistent with your local
+standard, if you have one, or pick one and use it consistently. When editing
+someone else's code, <span class="emphasis"><em>always</em></span> use the
+style used in that code.</p>
+<pre class="programlisting">
+   control {
+           statement;
+           statement;
+   }
+</pre>
+
+<p>The style above is called "K&amp;R style", and is preferred if you haven't
+already got a favorite. With K&amp;R style, the <code class=
+"literal">else</code> part of an <span class="emphasis"><em>if-else</em></span>
+statement and the <code class="literal">while</code> part of a <span class=
+"emphasis"><em>do-while</em></span> statement should appear on the same line as
+the close brace. With most other styles, the braces are always alone on a
+line.</p>
+
+<p>When a block of code has several labels (unless there are a lot of them),
+the labels are placed on separate lines. The fall-through feature of the C
+<span class="emphasis"><em>switch</em></span> statement, (that is, when there
+is no <code class="literal">break</code> between a code segment and the next
+<code class="literal">case</code> statement) must be commented for future
+maintenance. A lint-style comment/directive is best.</p>
+<pre class="programlisting">
+   switch (expr) {
+   case ABC:
+   case DEF:
+    statement;
+    break;
+   case UVW:
+    statement;
+    /*FALLTHROUGH*/
+   case XYZ:
+    statement;
+    break;
+   }
+</pre>
+
+<p>Here, the last <code class="literal">break</code> is unnecessary, but is
+required because it prevents a fall-through error if another <code class=
+"literal">case</code> is added later after the last one. The <code class=
+"literal">default</code> case, if used, should be last and does not require a
+<code class="literal">break</code> if it is last.</p>
+
+<p>Whenever an <span class="emphasis"><em>if-else</em></span> statement has a
+compound statement for either the <span class="emphasis"><em>if</em></span> or
+<span class="emphasis"><em>else</em></span> section, the statements of both the
+<span class="emphasis"><em>if</em></span> and <span class=
+"emphasis"><em>else</em></span> sections should both be enclosed in braces
+(called <span class="emphasis"><em>fully bracketed syntax</em></span>).</p>
+<pre class="programlisting">
+   if (expr) {
+    statement;
+   } else {
+    statement;
+    statement;
+   }
+</pre>Braces are also essential in <span class=
+"emphasis"><em>if-if-else</em></span> sequences with no second <span class=
+"emphasis"><em>else</em></span> such as the following, which will be parsed
+incorrectly if the brace after <code class="literal">(ex1)</code> and its mate
+are omitted:
+<pre class="programlisting">
+   if (ex1) {
+    if (ex2) {
+     funca();
+    }
+   } else {
+    funcb();
+   }
+</pre>
+
+<p>An <span class="emphasis"><em>if-else</em></span> with <span class=
+"emphasis"><em>else if</em></span> should be written with the <span class=
+"emphasis"><em>else</em></span> conditions left-justified.</p>
+<pre class="programlisting">
+   if (STREQ (reply, "yes")) {
+    statements for yes
+    ...
+   } else if (STREQ (reply, "no")) {
+    ...
+   } else if (STREQ (reply, "maybe")) {
+    ...
+   } else {
+    statements for default
+    ...
+   }
+</pre>The format then looks like a generalized <span class=
+"emphasis"><em>switch</em></span> statement and the tabbing reflects the switch
+between exactly one of several alternatives rather than a nesting of
+statements.
+
+<p><span class="emphasis"><em>Do-while</em></span> loops should always have
+braces around the body.</p>
+
+<p>The following code is very dangerous:</p>
+<pre class="programlisting">
+   #ifdef CIRCUIT
+   # define CLOSE_CIRCUIT(circno) { close_circ(circno); }
+   #else
+   # define CLOSE_CIRCUIT(circno)
+   #endif
+    ...
+    if (expr)
+     statement;
+    else
+     CLOSE_CIRCUIT(x)
+    ++i;
+</pre>Note that on systems where CIRCUIT is not defined the statement
+"<code class="literal">++i;</code>" will only get executed when <code class=
+"literal">expr</code> is false! This example points out both the value of
+naming macros with CAPS and of making code fully-bracketed.
+
+<p>Sometimes an <span class="emphasis"><em>if</em></span> causes an
+unconditional control transfer via <code class="literal">break</code>,
+<code class="literal">continue</code>, <code class="literal">goto</code>, or
+<code class="literal">return</code>. The <span class=
+"emphasis"><em>else</em></span> should be implicit and the code should not be
+indented.</p>
+<pre class="programlisting">
+   if (level&gt; limit)
+    return (OVERFLOW)
+   normal();
+   return (level);
+</pre>The "flattened" indentation tells the reader that the boolean test is
+invariant over the rest of the enclosing block.
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N103D8" id="N103D8"></a>Operators</h2>
+</div>
+
+<p>Unary operators should not be separated from their single operand.
+Generally, all binary operators except '<code class="literal">.</code>' and
+'<code class="literal">-&gt;</code>' should be separated from their operands by
+blanks. Some judgement is called for in the case of complex expressions, which
+may be clearer if the "inner" operators are not surrounded by spaces and the
+"outer" ones are.</p>
+
+<p>If you think an expression will be hard to read, consider breaking it across
+lines. Splitting at the lowest-precedence operator near the break is best.
+Since C has some unexpected precedence rules, expressions involving mixed
+operators should be parenthesized. Too many parentheses, however, can make a
+line <span class="emphasis"><em>harder</em></span> to read because humans
+aren't good at parenthesis-matching.</p>
+
+<p>There is a time and place for the binary comma operator, but generally it
+should be avoided. The comma operator is most useful to provide multiple
+initializations or operations, as in <span class="emphasis"><em>for</em></span>
+statements. Complex expressions, for instance those with nested ternary
+<span class="emphasis"><em>?:</em></span> operators, can be confusing and
+should be avoided if possible. There are some macros like <code class=
+"literal">getchar</code> where both the ternary operator and comma operators
+are useful. The logical expression operand before the <span class=
+"emphasis"><em>?:</em></span> should be parenthesized and both return values
+must be the same type.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N103FD" id="N103FD"></a>Naming Conventions</h2>
+</div>
+
+<p>Individual projects will no doubt have their own naming conventions. There
+are some general rules however.</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>Names with leading and trailing underscores are reserved for system purposes
+and should not be used for any user-created names. Most systems use them for
+names that the user should not have to know. If you must have your own private
+identifiers, begin them with a letter or two identifying the package to which
+they belong.</p>
+</li>
+
+<li>
+<p>#define constants should be in all CAPS.</p>
+</li>
+
+<li>
+<p>Enum constants are Capitalized or in all CAPS</p>
+</li>
+
+<li>
+<p>Function, typedef, and variable names, as well as struct, union, and enum
+tag names should be in lower case.</p>
+</li>
+
+<li>
+<p>Many macro "functions" are in all CAPS. Some macros (such as <code class=
+"literal">getchar</code> and <code class="literal">putchar</code>) are in lower
+case since they may also exist as functions. Lower-case macro names are only
+acceptable if the macros behave like a function call, that is, they evaluate
+their parameters <span class="emphasis"><em>exactly</em></span> once and do not
+assign values to named parameters. Sometimes it is impossible to write a macro
+that behaves like a function even though the arguments are evaluated exactly
+once.</p>
+</li>
+
+<li>
+<p>Avoid names that differ only in case, like <span class=
+"emphasis"><em>foo</em></span> and <span class="emphasis"><em>Foo</em></span>.
+Similarly, avoid <span class="emphasis"><em>foobar</em></span> and <span class=
+"emphasis"><em>foo_bar</em></span>. The potential for confusion is
+considerable.</p>
+</li>
+
+<li>
+<p>Similarly, avoid names that look like each other. On many terminals and
+printers, 'l', '1' and 'I' look quite similar. A variable named 'l' is
+particularly bad because it looks so much like the constant '1'.</p>
+</li>
+</ul>
+</div>
+
+<p>In general, global names (including <span class=
+"emphasis"><em>enum</em></span>s) should have a common prefix identifying the
+module that they belong with. Globals may alternatively be grouped in a global
+structure. Typedeffed names often have "<code class="literal">_t</code>"
+appended to their name.</p>
+
+<p>Avoid names that might conflict with various standard library names. Some
+systems will include more library code than you want. Also, your program may be
+extended someday.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h2 class="title c3"><a name="N10441" id="N10441"></a>Constants</h2>
+</div>
+
+<p>Numerical constants should not be coded directly. The <span class=
+"emphasis"><em>#define</em></span> feature of the C preprocessor should be used
+to give constants meaningful names. Symbolic constants make the code easier to
+read. Defining the value in one place also makes it easier to administer large
+programs since the constant value can be changed uniformly by changing only the
+define. The enumeration data type is a better way to declare variables that
+take on only a discrete set of values, since additional type checking is often
+available. At the very least, any directly-coded numerical constant must have a
+comment explaining the derivation of the value.</p>
+
+<p>Constants should be defined consistently with their use; e.g. use
+<code class="literal">540.0</code> for a float instead of <code class=
+"literal">540</code> with an implicit float cast. There are some cases where
+the constants 0 and 1 may appear as themselves instead of as defines. For
+example if a <span class="emphasis"><em>for</em></span> loop indexes through an
+array, then</p>
+<pre class="programlisting">
+   for (i = 0; i &lt; ARYBOUND; i++)
+</pre>is reasonable while the code
+<pre class="programlisting">
+   door_t *front_door = opens(door[i], 7);
+   if (front_door == 0)
+    error("can't open %s\\n", door[i]);
+</pre>is not. In the last example <code class="literal">front_door</code> is a
+pointer. When a value is a pointer it should be compared to <code class=
+"literal">NULL</code> instead of 0. <span class="emphasis"><em>NULL</em></span>
+is available either as part of the standard I/O library's header file
+<span class="emphasis"><em>stdio.h</em></span> or in <span class=
+"emphasis"><em>stdlib.h</em></span> for newer systems. Even simple values like
+1 or 0 are often better expressed using defines like <span class=
+"emphasis"><em>TRUE</em></span> and <span class=
+"emphasis"><em>FALSE</em></span> (sometimes <span class=
+"emphasis"><em>YES</em></span> and <span class="emphasis"><em>NO</em></span>
+read better).
+
+<p>Simple character constants should be defined as character literals rather
+than numbers. Non-text characters are discouraged as non-portable. If non-text
+characters are necessary, particularly if they are used in strings, they should
+be written using a escape character of three octal digits rather than one
+(e.g., <code class="literal">'\007'</code>). Even so, such usage should be
+considered machine-dependent and treated as such.</p>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10488" id="N10488"></a> Macros</h3>
+</div>
+
+<p>Complex expressions can be used as macro parameters, and operator-precedence
+problems can arise unless all occurrences of parameters have parentheses around
+them. There is little that can be done about the problems caused by side
+effects in parameters except to avoid side effects in expressions (a good idea
+anyway) and, when possible, to write macros that evaluate their parameters
+exactly once. There are times when it is impossible to write macros that act
+exactly like functions.</p>
+
+<p>Some macros also exist as functions (e.g., <code class="literal">getc</code>
+and <code class="literal">fgetc</code>). The macro should be used in
+implementing the function so that changes to the macro will be automatically
+reflected in the function. Care is needed when interchanging macros and
+functions since function parameters are passed by value, while macro parameters
+are passed by name substitution. Carefree use of macros requires that they be
+declared carefully.</p>
+
+<p>Macros should avoid using globals, since the global name may be hidden by a
+local declaration. Macros that change named parameters (rather than the storage
+they point at) or may be used as the left-hand side of an assignment should
+mention this in their comments. Macros that take no parameters but reference
+variables, are long, or are aliases for function calls should be given an empty
+parameter list, e.g.,</p>
+<pre class="programlisting">
+   #define OFF_A() (a_global+OFFSET)
+   #define BORK() (zork())
+   #define SP3() if (b) { int x; av = f (&amp;x); bv += x; }
+</pre>
+
+<p>Macros save function call/return overhead, but when a macro gets long, the
+effect of the call/return becomes negligible, so a function should be used
+instead.</p>
+
+<p>In some cases it is appropriate to make the compiler insure that a macro is
+terminated with a semicolon.</p>
+<pre class="programlisting">
+   if (x==3)
+       SP3();
+   else
+       BORK();
+</pre>If the semicolon is omitted after the call to <code class=
+"literal">SP3</code>, then the <code class="literal">else</code> will
+(silently!) become associated with the <code class="literal">if</code> in the
+<code class="literal">SP3</code> macro. With the semicolon, the <code class=
+"literal">else</code> doesn't match <span class="emphasis"><em>any</em></span>
+<code class="literal">if</code>! The macro <code class="literal">SP3</code> can
+be written safely as
+<pre class="programlisting">
+   #define SP3() \\
+    do { if (b) { int x; av = f (&amp;x); bv += x; }} while (0)
+</pre>Writing out the enclosing <span class="emphasis"><em>do-while</em></span>
+by hand is awkward and some compilers and tools may complain that there is a
+constant in the "<code class="literal">while</code>" conditional. A macro for
+declaring statements may make programming easier.
+<pre class="programlisting">
+   #ifdef lint
+    static int ZERO;
+   #else
+   # define ZERO 0
+   #endif
+   #define STMT( stuff )  do { stuff } while (ZERO)
+</pre>Declare <code class="literal">SP3</code> with
+<pre class="programlisting">
+   #define SP3() \\
+    STMT( if (b) { int x; av = f (&amp;x); bv += x; } )
+</pre>Using <code class="literal">STMT</code> will help prevent small typos
+from silently changing programs. Except for type casts, <code class=
+"literal">sizeof</code>, and hacks such as the above, macros should contain
+keywords only if the entire macro is surrounded by braces.
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N104E0" id="N104E0"></a>Conditional
+Compilation.</h3>
+</div>
+
+<p>Conditional compilation is useful for things like machine-dependencies,
+debugging, and for setting certain options at compile-time. Beware of
+conditional compilation. Various controls can easily combine in unforeseen
+ways. If you #ifdef machine dependencies, make sure that when no machine is
+specified, the result is an error, not a default machine. (Use "<code class=
+"literal">#error</code>" and indent it so it works with older compilers.) If
+you #ifdef optimizations, the default should be the unoptimized code rather
+than an uncompilable program. Be sure to test the unoptimized code.</p>
+
+<p>Note that the text inside of an #ifdeffed section may be scanned (processed)
+by the compiler, even if the #ifdef is false. Thus, even if the #ifdeffed part
+of the file never gets compiled (e.g., <code class="literal">#ifdef
+COMMENT</code>), it cannot be arbitrary text.</p>
+
+<p>Put #ifdefs in header files instead of source files when possible. Use the
+#ifdefs to define macros that can be used uniformly in the code. For instance,
+a header file for checking memory allocation might look like (omitting
+definitions for <code class="literal">REALLOC</code> and <code class=
+"literal">FREE</code>):</p>
+<pre class="programlisting">
+   #ifdef DEBUG
+    extern void *mm_malloc();
+   # define MALLOC(size) (mm_malloc(size))
+   #else
+    extern void *malloc();
+   # define MALLOC(size) (malloc(size))
+   #endif
+</pre>
+
+<p>Conditional compilation should generally be on a feature-by-feature basis.
+Machine or operating system dependencies should be avoided in most cases.</p>
+<pre class="programlisting">
+   #ifdef BSD4
+    long t = time ((long *)NULL);
+   #endif
+</pre>The preceding code is poor for two reasons: there may be 4BSD systems for
+which there is a better choice, and there may be non-4BSD systems for which the
+above <span class="emphasis"><em>is</em></span> the best code. Instead, use
+<span class="emphasis"><em>define</em></span> symbols such as <code class=
+"literal">TIME_LONG</code> and <code class="literal">TIME_STRUCT</code> and
+define the appropriate one in a configuration file such as <span class=
+"emphasis"><em>config.h</em></span>.
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10515" id="N10515"></a>Debugging</h3>
+</div>
+
+<p>"<span class="emphasis"><em>C Code. C code run. Run, code, run...
+PLEASE!!!</em></span>" -- Barbara Tongue</p>
+
+<p>If you use <span class="emphasis"><em>enum</em></span>s, the first enum
+constant should have a non-zero value, or the first constant should indicate an
+error.</p>
+<pre class="programlisting">
+   enum { STATE_ERR, STATE_START, STATE_NORMAL, STATE_END } state_t;
+   enum { VAL_NEW=1, VAL_NORMAL, VAL_DYING, VAL_DEAD } value_t;
+</pre>Uninitialized values will then often "catch themselves".
+
+<p>Check for error return values, even from functions that "can't" fail.
+Consider that <code class="literal">close()</code> and <code class=
+"literal">fclose()</code> can and do fail, even when all prior file operations
+have succeeded. Write your own functions so that they test for errors and
+return error values or abort the program in a well-defined way. Include a lot
+of debugging and error-checking code and leave most of it in the finished
+product. Check even for "impossible" errors. [8]</p>
+
+<p>Use the <span class="emphasis"><em>assert</em></span> facility to insist
+that each function is being passed well-defined values, and that intermediate
+results are well-formed.</p>
+
+<p>Build in the debug code using as few #ifdefs as possible. For instance, if
+"<code class="literal">mm_malloc</code>" is a debugging memory allocator, then
+<code class="literal">MALLOC</code> will select the appropriate allocator,
+avoids littering the code with #ifdefs, and makes clear the difference between
+allocation calls being debugged and extra memory that is allocated only during
+debugging.</p>
+<pre class="programlisting">
+   #ifdef DEBUG
+   # define MALLOC(size)  (mm_malloc(size))
+   #else
+   # define MALLOC(size)  (malloc(size))
+   #endif
+</pre>
+
+<p>Check bounds even on things that "can't" overflow. A function that writes on
+to variable-sized storage should take an argument <code class=
+"literal">maxsize</code> that is the size of the destination. If there are
+times when the size of the destination is unknown, some 'magic' value of
+<code class="literal">maxsize</code> should mean "no bounds checks". When bound
+checks fail, make sure that the function does something useful such as abort or
+return an error status.</p>
+<pre class="programlisting">
+   /*
+    * INPUT: A null-terminated source string 'src' to copy from and
+    * a 'dest' string to copy to.  'maxsize' is the size of 'dest'
+    * or UINT_MAX if the size is not known.  'src' and 'dest' must
+    * both be shorter than UINT_MAX, and 'src' must be no longer than
+    * 'dest'.
+    * OUTPUT: The address of 'dest' or NULL if the copy fails.
+    * 'dest' is modified even when the copy fails.
+    */
+    char *
+   copy (dest, maxsize, src)
+    char *dest, *src;
+    unsigned maxsize;
+   {
+    char *dp = dest;
+    while (maxsize--&gt; 0)
+     if ((*dp++ = *src++) == '\\0')
+      return (dest);
+    return (NULL);
+   }
+</pre>
+
+<p>In all, remember that a program that produces wrong answers twice as fast is
+infinitely slower. The same is true of programs that crash occasionally or
+clobber valid data.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10553" id="N10553"></a>Portability</h3>
+</div>
+
+<p>"<span class="emphasis"><em>C combines the power of assembler with the
+portability of assembler.</em></span>" -- Anonymous, alluding to Bill
+Thacker.</p>
+
+<p>The advantages of portable code are well known. This section gives some
+guidelines for writing portable code. Here, "portable" means that a source file
+can be compiled and executed on different machines with the only change being
+the inclusion of possibly different header files and the use of different
+compiler flags. The header files will contain #defines and typedefs that may
+vary from machine to machine. In general, a new "machine" is different
+hardware, a different operating system, a different compiler, or any
+combination of these. Reference [1] contains useful information on both style
+and portability. The following is a list of pitfalls to be avoided and
+recommendations to be considered when designing portable code:</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>Write portable code first, worry about detail optimizations only on machines
+where they prove necessary. Optimized code is often obscure. Optimizations for
+one machine may produce worse code on another. Document performance hacks and
+localize them as much as possible. Documentation should explain <span class=
+"emphasis"><em>how</em></span> it works and <span class=
+"emphasis"><em>why</em></span> it was needed (e.g., "loop executes 6 zillion
+times").</p>
+</li>
+
+<li>
+<p>Recognize that some things are inherently non-portable. Examples are code to
+deal with particular hardware registers such as the program status word, and
+code that is designed to support a particular piece of hardware, such as an
+assembler or I/O driver. Even in these cases there are many routines and data
+organizations that can be made machine independent.</p>
+</li>
+
+<li>
+<p>Organize source files so that the machine-independent code and the
+machine-dependent code are in separate files. Then if the program is to be
+moved to a new machine, it is a much easier task to determine what needs to be
+changed. Comment the machine dependence in the headers of the appropriate
+files.</p>
+</li>
+
+<li>
+<p>Any behavior that is described as "implementation defined" should be treated
+as a machine (compiler) dependency. Assume that the compiler or hardware does
+it some completely screwy way.</p>
+</li>
+
+<li>
+<p>Pay attention to word sizes. Objects may be non-intuitive sizes, Pointers
+are not always the same size as <span class="emphasis"><em>int</em></span>s,
+the same size as each other, or freely interconvertible. The following table
+shows bit sizes for basic types in C for various machines and compilers.</p>
+
+<div class="informaltable">
+<table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+
+<thead>
+<tr>
+<th>type</th>
+
+<th>pdp11</th>
+
+<th>VAX/11</th>
+
+<th>68000</th>
+
+<th>Cray-2</th>
+
+<th>Unisys</th>
+
+<th>Harris</th>
+
+<th>80386</th>
+</tr>
+
+<tr>
+<th></th>
+
+<th>series</th>
+
+<th></th>
+
+<th>family</th>
+
+<th></th>
+
+<th>1100</th>
+
+<th>H800</th>
+
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td></td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+</tr>
+
+<tr>
+<td>char</td>
+
+<td>8</td>
+
+<td>8</td>
+
+<td>8</td>
+
+<td>8</td>
+
+<td>9</td>
+
+<td>8</td>
+
+<td>8</td>
+</tr>
+
+<tr>
+<td>short</td>
+
+<td>16</td>
+
+<td>16</td>
+
+<td>8/16</td>
+
+<td>64(32)</td>
+
+<td>18</td>
+
+<td>24</td>
+
+<td>8/16</td>
+</tr>
+
+<tr>
+<td>int</td>
+
+<td>16</td>
+
+<td>32</td>
+
+<td>16/32</td>
+
+<td>64(32)</td>
+
+<td>36</td>
+
+<td>24</td>
+
+<td>16/32</td>
+</tr>
+
+<tr>
+<td>long</td>
+
+<td>32</td>
+
+<td>32</td>
+
+<td>32</td>
+
+<td>64</td>
+
+<td>36</td>
+
+<td>48</td>
+
+<td>32</td>
+</tr>
+
+<tr>
+<td>char*</td>
+
+<td>16</td>
+
+<td>32</td>
+
+<td>32</td>
+
+<td>64</td>
+
+<td>72</td>
+
+<td>24</td>
+
+<td>16/32/48</td>
+</tr>
+
+<tr>
+<td>int*</td>
+
+<td>16</td>
+
+<td>32</td>
+
+<td>32</td>
+
+<td>64(24)</td>
+
+<td>72</td>
+
+<td>24</td>
+
+<td>16/32/48</td>
+</tr>
+
+<tr>
+<td>int(*)()</td>
+
+<td>16</td>
+
+<td>32</td>
+
+<td>32</td>
+
+<td>64</td>
+
+<td>576</td>
+
+<td>24</td>
+
+<td>16/32/48</td>
+</tr>
+</tbody>
+</table>
+</div>Some machines have more than one possible size for a given type. The size
+you get can depend both on the compiler and on various compile-time flags. The
+following table shows "safe" type sizes on the majority of systems. Unsigned
+numbers are the same bit size as signed numbers.
+
+<div class="informaltable">
+<table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+
+<thead>
+<tr>
+<th>Type</th>
+
+<th>Minimum</th>
+
+<th>No Smaller</th>
+</tr>
+
+<tr>
+<th></th>
+
+<th># Bits</th>
+
+<th>Than</th>
+</tr>
+
+<tr>
+<th></th>
+
+<td class="auto-generated">&nbsp;</td>
+
+<td class="auto-generated">&nbsp;</td>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>char</td>
+
+<td>8</td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>short</td>
+
+<td>16</td>
+
+<td>char</td>
+</tr>
+
+<tr>
+<td>int</td>
+
+<td>16</td>
+
+<td>short</td>
+</tr>
+
+<tr>
+<td>long</td>
+
+<td>32</td>
+
+<td>int</td>
+</tr>
+
+<tr>
+<td>float</td>
+
+<td>24</td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>double</td>
+
+<td>38</td>
+
+<td>float</td>
+</tr>
+
+<tr>
+<td>any *</td>
+
+<td>14</td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>char *</td>
+
+<td>15</td>
+
+<td>any *</td>
+</tr>
+
+<tr>
+<td>void *</td>
+
+<td>15</td>
+
+<td>any *</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+
+<li>
+<p>The <span class="emphasis"><em>void*</em></span> type is guaranteed to have
+enough bits of precision to hold a pointer to any data object. The <span class=
+"emphasis"><em>void(*)()</em></span> type is guaranteed to be able to hold a
+pointer to any function. Use these types when you need a generic pointer. (Use
+<span class="emphasis"><em>char*</em></span> and <span class=
+"emphasis"><em>char(*)()</em></span>, respectively, in older compilers). Be
+sure to cast pointers back to the correct type before using them.</p>
+</li>
+
+<li>
+<p>Even when, say, an <span class="emphasis"><em>int*</em></span> and a
+<span class="emphasis"><em>char*</em></span> are the same <span class=
+"emphasis"><em>size</em></span>, they may have different <span class=
+"emphasis"><em>formats</em></span>. For example, the following will fail on
+some machines that have <code class="literal">sizeof(int*)</code> equal to
+<code class="literal">sizeof(char*)</code>. The code fails because <code class=
+"literal">free</code> expects a <span class="emphasis"><em>char*</em></span>
+and gets passed an <span class="emphasis"><em>int*</em></span>.</p>
+<pre class="programlisting">
+   int *p = (int *) malloc (sizeof(int));
+   free (p);
+</pre>
+</li>
+
+<li>
+<p>Note that the <span class="emphasis"><em>size</em></span> of an object does
+not guarantee the <span class="emphasis"><em>precision</em></span> of that
+object. The Cray-2 may use 64 bits to store an <span class=
+"emphasis"><em>int</em></span>, but a <span class=
+"emphasis"><em>long</em></span> cast into an <span class=
+"emphasis"><em>int</em></span> and back to a <span class=
+"emphasis"><em>long</em></span> may be truncated to 32 bits.</p>
+</li>
+
+<li>
+<p>The integer <span class="emphasis"><em>constant</em></span> zero may be cast
+to any pointer type. The resulting pointer is called a <span class=
+"emphasis"><em>null pointer</em></span> for that type, and is different from
+any other pointer of that type. A null pointer always compares equal to the
+constant zero. A null pointer might <span class="emphasis"><em>not</em></span>
+compare equal with a variable that has the value zero. Null pointers are
+<span class="emphasis"><em>not</em></span> always stored with all bits zero.
+Null pointers for two different types are sometimes different. A null pointer
+of one type cast in to a pointer of another type will be cast in to the null
+pointer for that second type.</p>
+</li>
+
+<li>
+<p>On ANSI compilers, when two pointers of the same type access the same
+storage, they will compare as equal. When non-zero integer constants are cast
+to pointer types, they may become identical to other pointers. On non-ANSI
+compilers, pointers that access the same storage may compare as different. The
+following two pointers, for instance, may or may not compare equal, and they
+may or may not access the same storage6.</p>
+</li>
+
+<li>
+<p>The code may also fail to compile, fault on pointer creation, fault on
+pointer comparison, or fault on pointer dereferences.</p>
+<pre class="programlisting">
+   ((int *) 2 )
+   ((int *) 3 )
+</pre>If you need 'magic' pointers other than NULL, either allocate some
+storage or treat the pointer as a machine dependence.
+<pre class="programlisting">
+   
+extern int x_int_dummy;  /* in x.c */
+   #define X_FAIL (NULL)
+   #define X_BUSY (&amp;x_int_dummy)
+</pre>
+<pre class="programlisting">
+   #define X_FAIL (NULL)
+   #define X_BUSY MD_PTR1  /* MD_PTR1 from "machdep.h" */
+</pre>
+</li>
+
+<li>
+<p>Floating-point numbers have both a <span class=
+"emphasis"><em>precision</em></span> and a <span class=
+"emphasis"><em>range</em></span>. These are independent of the size of the
+object. Thus, overflow (underflow) for a 32-bit floating-point number will
+happen at different values on different machines. Also, 4.9 times 5.1 will
+yield two different numbers on two different machines. Differences in rounding
+and truncation can give surprisingly different answers.</p>
+</li>
+
+<li>
+<p>On some machines, a <span class="emphasis"><em>double</em></span> may have
+<span class="emphasis"><em>less</em></span> range or precision than a
+<span class="emphasis"><em>float</em></span>.</p>
+</li>
+
+<li>
+<p>On some machines the first half of a <span class=
+"emphasis"><em>double</em></span> may be a <span class=
+"emphasis"><em>float</em></span> with similar value. Do <span class=
+"emphasis"><em>not</em></span> depend on this.</p>
+</li>
+
+<li>
+<p>Watch out for signed characters. On some VAXes, for instance, characters are
+sign extended when used in expressions, which is not the case on many other
+machines. Code that assumes signed/unsigned is unportable. For example,
+<code class="literal">array[c]</code> won't work if <code class=
+"literal">c</code> is supposed to be positive and is instead signed and
+negative. If you must assume signed or unsigned characters, comment them as
+<code class="literal">SIGNED</code> or <code class="literal">UNSIGNED</code>.
+Unsigned behavior can be guaranteed with <code class="literal">unsigned
+char</code>.</p>
+</li>
+
+<li>
+<p>Avoid assuming ASCII. If you must assume, document and localize. Remember
+that characters may hold (much) more than 8 bits.</p>
+</li>
+
+<li>
+<p>Code that takes advantage of the two's complement representation of numbers
+on most machines should not be used. Optimizations that replace arithmetic
+operations with equivalent shifting operations are particularly suspect. If
+absolutely necessary, machine-dependent code should be #ifdeffed or operations
+should be performed by #ifdeffed macros. You should weigh the time savings with
+the potential for obscure and difficult bugs when your code is moved.</p>
+</li>
+
+<li>
+<p>In general, if the word size or value range is important, typedef "sized"
+types. Large programs should have a central header file which supplies typedefs
+for commonly-used width-sensitive types, to make it easier to change them and
+to aid in finding width-sensitive code. Unsigned types other than <span class=
+"emphasis"><em>unsigned int</em></span> are highly compiler-dependent. If a
+simple loop counter is being used where either 16 or 32 bits will do, then use
+<span class="emphasis"><em>int</em></span>, since it will get the most
+efficient (natural) unit for the current machine.</p>
+</li>
+
+<li>
+<p>Data <span class="emphasis"><em>alignment</em></span> is also important. For
+instance, on various machines a 4-byte integer may start at any address, start
+only at an even address, or start only at a multiple-of-four address. Thus, a
+particular structure may have its elements at different offsets on different
+machines, even when given elements are the same size on all machines. Indeed, a
+structure of a 32-bit pointer and an 8-bit character may be 3 sizes on 3
+different machines. As a corollary, pointers to objects may not be interchanged
+freely; saving an integer through a pointer to 4 bytes starting at an odd
+address will sometimes work, sometimes cause a core dump, and sometimes fail
+silently (clobbering other data in the process). Pointer-to-character is a
+particular trouble spot on machines which do not address to the byte. Alignment
+considerations and loader peculiarities make it very rash to assume that two
+consecutively-declared variables are together in memory, or that a variable of
+one type is aligned appropriately to be used as another type.</p>
+</li>
+
+<li>
+<p>The bytes of a word are of increasing significance with increasing address
+on machines such as the VAX (little-endian) and of decreasing significance with
+increasing address on other machines such as the 68000 (big-endian). The order
+of bytes in a word and of words in larger objects (say, a double word) might
+not be the same. Hence any code that depends on the left-right orientation of
+bits in an object deserves special scrutiny. Bit fields within structure
+members will only be portable so long as two separate fields are never
+concatenated and treated as a unit. [1,3] Actually, it is nonportable to
+concatenate <span class="emphasis"><em>any</em></span> two variables.</p>
+</li>
+
+<li>
+<p>There may be unused holes in structures. Suspect unions used for type
+cheating. Specifically, a value should not be stored as one type and retrieved
+as another. An explicit tag field for unions may be useful.</p>
+</li>
+
+<li>
+<p>Different compilers use different conventions for returning structures. This
+causes a problem when libraries return structure values to code compiled with a
+different compiler. Structure pointers are not a problem.</p>
+</li>
+
+<li>
+<p>Do not make assumptions about the parameter passing mechanism. especially
+pointer sizes and parameter evaluation order, size, etc. The following code,
+for instance, is <span class="emphasis"><em>very</em></span> nonportable.</p>
+<pre class="programlisting">
+    c = foo (getchar(), getchar());
+    char
+   foo (c1, c2, c3)
+    char c1, c2, c3;
+   {
+    char bar = *(&amp;c1 + 1);
+    return (bar);   /* often won't return c2 */
+   }
+</pre>This example has lots of problems. The stack may grow up or down (indeed,
+there need not even be a stack!). parameters may be widened when they are
+passed, so a <span class="emphasis"><em>char</em></span> might be passed as an
+<span class="emphasis"><em>int</em></span>, for instance. Arguments may be
+pushed left-to-right, right-to-left, in arbitrary order, or passed in registers
+(not pushed at all). The order of evaluation may differ from the order in which
+they are pushed. One compiler may use several (incompatible) calling
+conventions.
+</li>
+
+<li>
+<p>On some machines, the null character pointer <code class="literal">((char
+*)0)</code> is treated the same way as a pointer to a null string. Do
+<span class="emphasis"><em>not</em></span> depend on this.</p>
+</li>
+
+<li>
+<p>Do not modify string constants7.</p>
+</li>
+
+<li>
+<p>Some libraries attempt to modify and then restore read-only string
+variables. Programs sometimes won't port because of these broken libraries. The
+libraries are getting better. One particularly notorious (bad) example is</p>
+<pre class="programlisting">
+   s = "/dev/tty??";
+   strcpy (&amp;s[8], ttychars);
+</pre>
+</li>
+
+<li>
+<p>The address space may have holes. Simply <span class=
+"emphasis"><em>computing</em></span> the address of an unallocated element in
+an array (before or after the actual storage of the array) may crash the
+program. If the address is used in a comparison, sometimes the program will run
+but clobber data, give wrong answers, or loop forever. In ANSI C, a pointer
+into an array of objects may legally point to the first element after the end
+of the array; this is usually safe in older implementations. This "outside"
+pointer may not be dereferenced.</p>
+</li>
+
+<li>
+<p>Only the <code class="literal">==</code> and <code class="literal">!=</code>
+comparisons are defined for all pointers of a given type. It is only portable
+to use <code class="literal">&lt;</code>, <code class="literal">&lt;=</code>,
+<code class="literal">&gt;</code>, or <code class="literal">&gt;=</code> to
+compare pointers when they both point in to (or to the first element after) the
+same array. It is likewise only portable to use arithmetic operators on
+pointers that both point into the same array or the first element
+afterwards.</p>
+</li>
+
+<li>
+<p>Word size also affects shifts and masks. The following code will clear only
+the three rightmost bits of an <span class="emphasis"><em>int</em></span> on
+<span class="emphasis"><em>some</em></span> 68000s. On other machines it will
+also clear the upper two bytes.</p>
+<pre class="programlisting">
+   x &amp;= 0177770
+</pre>Use instead
+<pre class="programlisting">
+   x &amp;= ~07
+</pre>which works properly on all machines. Bitfields do not have these
+problems.
+</li>
+
+<li>
+<p>Side effects within expressions can result in code whose semantics are
+compiler-dependent, since C's order of evaluation is explicitly undefined in
+most places. Notorious examples include the following.</p>
+<pre class="programlisting">
+   a[i] = b[i++];
+</pre>In the above example, we know only that the subscript into <code class=
+"literal">b</code> has not been incremented. The index into <code class=
+"literal">a</code> could be the value of <code class="literal">i</code> either
+before or after the increment.
+<pre class="programlisting">
+   struct bar_t { struct bar_t *next; } bar;
+   bar-&gt;next = bar = tmp;
+</pre>In the second example, the address of "<code class=
+"literal">bar-&gt;next</code>" may be computed before the value is assigned to
+"<code class="literal">bar</code>".
+<pre class="programlisting">
+   bar = bar-&gt;next = tmp;
+</pre>In the third example, <code class="literal">bar</code> can be assigned
+before <code class="literal">bar-&gt;next.</code> Although this <span class=
+"emphasis"><em>appears</em></span> to violate the rule that "assignment
+proceeds right-to-left", it is a legal interpretation. Consider the following
+example:
+<pre class="programlisting">
+   long i;
+   short a[N];
+   i = old
+   i = a[i] = new;
+</pre>The value that "<code class="literal">i</code>" is assigned must be a
+value that is typed as if assignment proceeded right-to-left. However,
+"<code class="literal">i</code>" may be assigned the value "<code class=
+"literal">(long)(short)new</code>" before "<code class="literal">a[i]</code>"
+is assigned to. Compilers do differ.
+</li>
+
+<li>
+<p>Be suspicious of numeric values appearing in the code ("magic numbers").</p>
+</li>
+
+<li>
+<p>Avoid preprocessor tricks. Tricks such as using <code class=
+"literal">/**/</code> for token pasting and macros that rely on argument string
+expansion will break reliably.</p>
+<pre class="programlisting">
+   #define FOO(string) (printf("string = %s",(string)))
+   ...
+   FOO(filename);
+</pre>Will only sometimes be expanded to
+<pre class="programlisting">
+   (printf("filename = %s",(filename)))
+</pre>Be aware, however, that tricky preprocessors may cause macros to break
+<span class="emphasis"><em>accidentally</em></span> on some machines. Consider
+the following two versions of a macro.
+<pre class="programlisting">
+   #define LOOKUP(chr) (a['c'+(chr)]) /* Works as intended. */
+   #define LOOKUP(c) (a['c'+(c)])  /* Sometimes breaks. */
+</pre>The second version of <code class="literal">LOOKUP</code> can be expanded
+in two different ways and will cause code to break mysteriously.
+</li>
+
+<li>
+<p>Become familiar with existing library functions and defines. (But not
+<span class="emphasis"><em>too</em></span> familiar. The internal details of
+library facilities, as opposed to their external interfaces, are subject to
+change without warning. They are also often quite unportable.) You should not
+be writing your own string compare routine, terminal control routines, or
+making your own defines for system structures. "Rolling your own" wastes your
+time and makes your code less readable, because another reader has to figure
+out whether you're doing something special in that reimplemented stuff to
+justify its existence. It also prevents your program from taking advantage of
+any microcode assists or other means of improving performance of system
+routines. Furthermore, it's a fruitful source of bugs. If possible, be aware of
+the <span class="emphasis"><em>differences</em></span> between the common
+libraries (such as ANSI, POSIX, and so on).</p>
+</li>
+
+<li>
+<p>Use <span class="emphasis"><em>lint</em></span> when it is available. It is
+a valuable tool for finding machine-dependent constructs as well as other
+inconsistencies or program bugs that pass the compiler. If your compiler has
+switches to turn on warnings, use them.</p>
+</li>
+
+<li>
+<p>Suspect labels inside blocks with the associated <span class=
+"emphasis"><em>switch</em></span> or <span class=
+"emphasis"><em>goto</em></span> outside the block.</p>
+</li>
+
+<li>
+<p>Wherever the type is in doubt, parameters should be cast to the appropriate
+type. Always cast NULL when it appears in non-prototyped function calls. Do not
+use function calls as a place to do type cheating. C has confusing promotion
+rules, so be careful. For example, if a function expects a 32-bit <span class=
+"emphasis"><em>long</em></span> and it is passed a 16-bit <span class=
+"emphasis"><em>int</em></span> the stack can get misaligned, the value can get
+promoted wrong, etc.</p>
+</li>
+
+<li>
+<p>Use explicit casts when doing arithmetic that mixes signed and unsigned
+values.</p>
+</li>
+
+<li>
+<p>The inter-procedural goto, <span class="emphasis"><em>longjmp</em></span>,
+should be used with caution. Many implementations "forget" to restore values in
+registers. Declare critical values as <span class=
+"emphasis"><em>volatile</em></span> if you can or comment them as <code class=
+"literal">VOLATILE</code>.</p>
+</li>
+
+<li>
+<p>Some linkers convert names to lower-case and some only recognize the first
+six letters as unique. Programs may break quietly on these systems.</p>
+</li>
+
+<li>
+<p>Beware of compiler extensions. If used, document and consider them as
+machine dependencies.</p>
+</li>
+
+<li>
+<p>A program cannot generally execute code in the data segment or write into
+the code segment. Even when it can, there is no guarantee that it can do so
+reliably.</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10848" id="N10848"></a>ANSI C</h3>
+</div>
+
+<p>Modern C compilers support some or all of the ANSI proposed standard C.
+Whenever possible, write code to run under standard C, and use features such as
+function prototypes, constant storage, and volatile storage. Standard C
+improves program performance by giving better information to optimizers.
+Standard C improves portability by insuring that all compilers accept the same
+input language and by providing mechanisms that try to hide machine
+dependencies or emit warnings about code that may be machine-dependent.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N1084D" id="N1084D"></a>Compatibility</h3>
+</div>
+
+<p>Write code that is easy to port to older compilers. For instance,</p>
+
+<div class="itemizedlist">
+<ul type="disc">
+<li>
+<p>conditionally #define new (standard) keywords such as <span class=
+"emphasis"><em>const</em></span> and <span class=
+"emphasis"><em>volatile</em></span> in a global <span class=
+"emphasis"><em>.h</em></span> file. Standard compilers pre-define the
+preprocessor symbol <code class="literal">__STDC__</code>8.</p>
+</li>
+
+<li>
+<p>Some compilers predefine <code class="literal">__STDC__</code> to be 0, in
+an attempt to indicate partial compliance with the ANSI C standard.
+Unfortunately, it is not possible to determine <span class=
+"emphasis"><em>which</em></span> ANSI facilities are provided. Thus, such
+compilers are broken. See the rule about "don't write around a broken compiler
+unless you are forced to." The <span class="emphasis"><em>void*</em></span>
+type is hard to get right simply, since some older compilers understand
+<code class="literal">void</code> but not <code class="literal">void*</code>.
+It is easiest to create a new (machine- and compiler-dependent) <code class=
+"literal">VOIDP</code> type, usually <span class=
+"emphasis"><em>char*</em></span> on older compilers.</p>
+<pre class="programlisting">
+   #if __STDC__
+    typedef void *voidp;
+   # define COMPILER_SELECTED
+   #endif
+   #ifdef A_TARGET
+   # define const
+   # define volatile
+   # define void int
+    typedef char *voidp;
+   # define COMPILER_SELECTED
+   #endif
+   #ifdef ...
+    ...
+   #endif
+   #ifdef COMPILER_SELECTED
+   # undef COMPILER_SELECTED
+   #else
+    { NO TARGET SELECTED! }
+   #endif
+</pre>
+
+<p>Note that under ANSI C, the '#' for a preprocessor directive must be the
+first non-whitespace character on a line. Under older compilers it must be the
+first character on the line.</p>
+
+<p>When a static function has a forward declaration, the forward declaration
+must include the storage class. For older compilers, the class must be
+"<span class="emphasis"><em>extern</em></span>". For ANSI compilers, the class
+must be "<span class="emphasis"><em>static</em></span>". but global functions
+must still be declared as "<span class="emphasis"><em>extern</em></span>".
+Thus, forward declarations of static functions should use a #define such as
+<code class="literal">FWD_STATIC</code> that is #ifdeffed as appropriate.</p>
+
+<p>An "<code class="literal">#ifdef NAME</code>" should end with either
+"<code class="literal">#endif</code>" or "<code class="literal">#endif /* NAME
+*/</code>", <span class="emphasis"><em>not</em></span> with "<code class=
+"literal">#endif NAME</code>". The comment should not be used on short #ifdefs,
+as it is clear from the code.</p>
+
+<p>ANSI <span class="emphasis"><em>trigraphs</em></span> may cause programs
+with strings containing "<code class="literal">??</code>" may break
+mysteriously.</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N108BC" id="N108BC"></a>Formatting</h3>
+</div>
+
+<p>The style for ANSI C is the same as for regular C, with two notable
+exceptions: storage qualifiers and parameter lists.</p>
+
+<p>Because <code class="literal">const</code> and <code class=
+"literal">volatile</code> have strange binding rules, each <span class=
+"emphasis"><em>const</em></span> or <span class=
+"emphasis"><em>volatile</em></span> object should have a separate
+declaration.</p>
+<pre class="programlisting">
+   int const *s;  /* YES */
+   int const *s, *t; /* NO */
+</pre>
+
+<p>Prototyped functions merge parameter declaration and definition in to one
+list. parameters should be commented in the function comment.</p>
+<pre class="programlisting">
+   /*
+    * 'bp': boat trying to get in.
+    * 'stall': a list of stalls, never NULL.
+    * returns stall number, 0 =&gt; no room.
+    */
+    int
+   enter_pier (boat_t const *bp, stall_t *stall)
+   {
+    ...
+    
+</pre>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N108DC" id="N108DC"></a>Prototypes</h3>
+</div>
+
+<p>Function prototypes should be used to make code more robust and to make it
+run faster. Unfortunately, the prototyped <span class=
+"emphasis"><em>declaration</em></span></p>
+<pre class="programlisting">
+   extern void bork (char c);
+</pre>is incompatible with the <span class=
+"emphasis"><em>definition</em></span>
+<pre class="programlisting">
+    void
+   bork (c)
+    char c;
+   ...
+</pre>The prototype says that <code class="literal">c</code> is to be passed as
+the most natural type for the machine, possibly a byte. The non-prototyped
+(backwards-compatible) definition implies that <code class="literal">c</code>
+is always passed as an <span class="emphasis"><em>int</em></span>
+
+<p>Such automatic type promotion is called <span class=
+"emphasis"><em>widening</em></span>. For older compilers, the widening rules
+require that all <span class="emphasis"><em>char</em></span> and <span class=
+"emphasis"><em>short</em></span> parameters are passed as <span class=
+"emphasis"><em>int</em></span>s and that <span class=
+"emphasis"><em>float</em></span> parameters are passed as <span class=
+"emphasis"><em>double</em></span>s.</p>
+
+<p>If a function has promotable parameters then the caller and callee must be
+compiled identically. Either both must use function prototypes or neither can
+use prototypes. The problem can be avoided if parameters are promoted when the
+program is designed. For example, <code class="literal">bork</code> can be
+defined to take an <span class="emphasis"><em>int</em></span> parameter.</p>
+
+<p>The above declaration works if the definition is prototyped.</p>
+<pre class="programlisting">
+    void
+   bork (char c)
+   {
+    ...
+</pre>Unfortunately, the prototyped syntax will cause non-ANSI compilers to
+reject the program.
+
+<p>It <span class="emphasis"><em>is</em></span> easy to write external
+declarations that work with both prototyping and with older compilers10.</p>
+
+<p>Note that using <code class="literal">PROTO</code> violates the rule "don't
+change the syntax via macro substitution." It is regrettable that there isn't a
+better solution.</p>
+<pre class="programlisting">
+   #if __STDC__
+   # define PROTO(x) x
+   #else
+   # define PROTO(x) ()
+   #endif
+   extern char **ncopies PROTO((char *s, short times));
+     
+</pre>
+
+<p>Note that <code class="literal">PROTO</code> must be used with <span class=
+"emphasis"><em>double</em></span> parentheses.</p>
+
+<p>In the end, it may be best to write in only one style (e.g., with
+prototypes). When a non-prototyped version is needed, it is generated using an
+automatic conversion tool.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N10940" id="N10940"></a>Pragmas</h3>
+</div>
+
+<p>Pragmas are used to introduce machine-dependent code in a controlled way.
+Obviously, pragmas should be treated as machine dependencies. Unfortunately,
+the syntax of ANSI pragmas makes it impossible to isolate them in
+machine-dependent headers.</p>
+
+<p>Pragmas are of two classes. <span class=
+"emphasis"><em>Optimizations</em></span> may safely be ignored. Pragmas that
+change the system behavior ("required pragmas") may not. Required pragmas
+should be #ifdeffed so that compilation will abort if no pragma is
+selected.</p>
+
+<p>Two compilers may use a given pragma in two very different ways. For
+instance, one compiler may use "<code class="literal">haggis</code>" to signal
+an optimization. Another might use it to indicate that a given statement, if
+reached, should terminate the program. Thus, when pragmas are used, they must
+always be enclosed in machine-dependent #ifdefs. Pragmas must always be
+#ifdefed out for non-ANSI compilers. Be sure to indent the '#' character on the
+<code class="literal">#pragma</code>, as older preprocessors will halt on it
+otherwise.</p>
+<pre class="programlisting">
+   #if defined(__STDC__) &amp;&amp; defined(USE_HAGGIS_PRAGMA)
+    #pragma (HAGGIS)
+   #endif
+</pre>
+
+<p>"<span class="emphasis"><em>The '#pragma' command is specified in the ANSI
+standard to have an arbitrary implementation-defined effect. In the GNU C
+preprocessor, '#pragma' first attempts to run the game 'rogue'; if that fails,
+it tries to run the game 'hack'; if that fails, it tries to run GNU Emacs
+displaying the Tower of Hanoi; if that fails, it reports a fatal error. In any
+case, preprocessing does not continue.</em></span>" -- Manual for the GNU C
+preprocessor for GNU CC 1.34.</p>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N1095E" id="N1095E"></a>Special Considerations</h3>
+</div>
+
+<div class="orderedlist">
+<ol type="1">
+<li>
+<p>This section contains some miscellaneous do's and don'ts.</p>
+</li>
+
+<li>
+<p>Don't change syntax via macro substitution. It makes the program
+unintelligible to all but the perpetrator.</p>
+</li>
+
+<li>
+<p>Don't use floating-point variables where discrete values are needed. Using a
+<span class="emphasis"><em>float</em></span> for a loop counter is a great way
+to shoot yourself in the foot. Always test floating-point numbers as
+<span class="emphasis"><em>&lt;=</em></span> or <span class=
+"emphasis"><em>&gt;=</em></span>, never use an exact comparison (<span class=
+"emphasis"><em>==</em></span> or <span class=
+"emphasis"><em>!=</em></span>).</p>
+</li>
+
+<li>
+<p>Compilers have bugs. Common trouble spots include structure assignment and
+bitfields. You cannot generally predict which bugs a compiler has. You
+<span class="emphasis"><em>could</em></span> write a program that avoids all
+constructs that are known broken on all compilers. You won't be able to write
+anything useful, you might still encounter bugs, and the compiler might get
+fixed in the meanwhile. Thus, you should write "around" compiler bugs only when
+you are <span class="emphasis"><em>forced</em></span> to use a particular buggy
+compiler.</p>
+</li>
+
+<li>
+<p>Do not rely on automatic beautifiers. The main person who benefits from good
+program style is the programmer him/herself, and especially in the early design
+of handwritten algorithms or pseudo-code. Automatic beautifiers can only be
+applied to complete, syntactically correct programs and hence are not available
+when the need for attention to white space and indentation is greatest.
+Programmers can do a better job of making clear the complete visual layout of a
+function or file, with the normal attention to detail of a careful programmer.
+(In other words, some of the visual layout is dictated by intent rather than
+syntax and beautifiers cannot read minds.) Sloppy programmers should learn to
+be careful programmers instead of relying on a beautifier to make their code
+readable.</p>
+</li>
+
+<li>
+<p>Accidental omission of the second "<code class="literal">=</code>" of the
+logical compare is a problem. Use explicit tests. Avoid assignment with
+implicit test.</p>
+<pre class="programlisting">
+   abool = bbool;
+   if (abool) { ...
+</pre>When embedded assignment <span class="emphasis"><em>is</em></span> used,
+make the test explicit so that it doesn't get "fixed" later.
+<pre class="programlisting">
+   while ((abool = bbool) != FALSE) { ...
+</pre>
+<pre class="programlisting">
+   while (abool = bbool) { ... /* VALUSED */
+</pre>
+<pre class="programlisting">
+   while (abool = bbool, abool) { ...
+</pre>
+</li>
+
+<li>
+<p>Explicitly comment variables that are changed out of the normal control
+flow, or other code that is likely to break during maintenance.</p>
+</li>
+
+<li>
+<p>Modern compilers will put variables in registers automatically. Use the
+<span class="emphasis"><em>register</em></span> sparingly to indicate the
+variables that you think are most critical. In extreme cases, mark the 2-4 most
+critical values as <code class="literal">register</code> and mark the rest as
+<code class="literal">REGISTER.</code> The latter can be #defined to
+<code class="literal">register</code> on those machines with many
+registers.</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div class="section" lang="en">
+<div class="titlepage">
+<h3 class="title"><a name="N109BD" id="N109BD"></a>Lint</h3>
+</div>
+
+<p><span class="emphasis"><em>Lint</em></span> is a C program checker [2][11]
+that examines C source files to detect and report type incompatibilities,
+inconsistencies between function definitions and calls, potential program bugs,
+etc. The use of <span class="emphasis"><em>lint</em></span> on all programs is
+strongly recommended, and it is expected that most projects will require
+programs to use <span class="emphasis"><em>lint</em></span> as part of the
+official acceptance procedure.</p>
+
+<p>It should be noted that the best way to use <span class=
+"emphasis"><em>lint</em></span> is not as a barrier that must be overcome
+before official acceptance of a program, but rather as a tool to use during and
+after changes or additions to the code. <span class=
+"emphasis"><em>Lint</em></span> can find obscure bugs and insure portability
+before problems occur. Many messages from <span class=
+"emphasis"><em>lint</em></span> really do indicate something wrong. One fun
+story is about is about a program that was missing an argument to '<code class=
+"literal">fprintf</code>'.</p>
+<pre class="programlisting">
+   fprintf ("Usage: foo -bar &lt;file&gt;\\n");
+</pre>The <span class="emphasis"><em>author</em></span> never had a problem.
+But the program dumped core every time an ordinary user made a mistake on the
+command line. Many versions of <span class="emphasis"><em>lint</em></span> will
+catch this.
+
+<p>Most options are worth learning. Some options may complain about legitimate
+things, but they will also pick up many botches. Note that -p11</p>
+</div>
+</div>
+</div>
+</body>
+</html>

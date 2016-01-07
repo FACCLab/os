@@ -1,0 +1,718 @@
+<!-- ----------------------------------------- -->
+<!-- Page title (begin it with "15-410") ----- -->
+<!-- ----------------------------------------- -->
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 3.2//EN&quot;>
+<html>
+<head><title>15-410 Coding Style and Doxygen Documentation</title>
+<!-- notyet META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW" -->
+</head>
+<body bgcolor=white>
+<table width="100%" height="100%">
+
+<tr><td valign=top width=132>
+<table width=132 bgcolor=#cccccc height="100%">
+<tr><td height=140><center><font size=-1><b>Carnegie Mellon</b></font><br>
+<img alt="SCS logo" src="/~410/img/scslogo.gif"><br>
+<font size=-1><b>Computer Science Department</b></font></center></td></tr>
+<tr><td height=30><a href="/~410"><img alt="home" src="/~410/img/home.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/syllabus.html"><img alt="syllabus" src="/~410/img/syllabus.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/staff.html"><img alt="staff" src="/~410/img/staff.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/schedule.html"><img alt="schedule" src="/~410/img/schedule.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/lecture.html"><img alt="lecture" src="/~410/img/lecture.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/projects.html"><img alt="projects" src="/~410/img/projects.gif" border=0></a></td></tr>
+<tr><td height=30><a href="/~410/homeworks.html"><img alt="homeworks" src="/~410/img/homeworks.gif" border=0></a></td></tr>
+<tr><td>&nbsp;</td></tr></table>
+
+</td>
+
+<td width=10>&nbsp;</td>
+
+<td height="100%" valign=top>
+<br>
+
+<H1 ALIGN=CENTER>15-410 Coding Style and Doxygen Documentation</H1>
+<HR>
+<!-- Body goes here. -->
+ 
+
+<!-- ----------------------------------------- -->
+<!-- Content Begins -------------------------- -->
+<!-- ----------------------------------------- -->
+
+<table width=100% bgcolor=#ffffff height="100%">
+<td height="100%" valign=top>
+
+<!-- Body goes here. -->
+
+		<style type="text/css">
+			div.code { width: 100%; border: none; background-color: #eeeeee }
+		</style>
+
+		
+		<ol type='I'>
+			<li>
+				<a href="#introduction">Introduction</a>
+			</li>
+			<li>
+				<a href="#files">Comments for Files</a>
+			</li>
+			<li>
+				<a href="#functions">Comments for Functions and Data Structures</a>
+			</li>
+		   <li>
+            <a href="#style">Coding Style / Coding Standards</a>
+         </li>
+			<li>
+				<a href="#commands">Description of Commands</a>
+			</li>
+			<li>
+				<a href="#example">Putting it All Together</a>
+			</li>
+		</ol>
+		
+		<a name="introduction">
+			<h2>Introduction</h2>
+		</a>
+		<p>
+			Throught this course you will be working on big software projects
+			and an important part of any large project is documentation.
+			Documentation is especially important in group projects, like many of
+			the projects in this class.  Imagine how useful a browsable index
+			will be when your partner is asleep and you're trying to figure out
+			his/her code. In order to ensure that your source code has adequate
+			documentation, we will be requiring that your code be fully documented
+			using doxygen, a documentation system for C similar to JavaDoc.  This
+			document serves as a brief overview of doxygen and the features you
+			will use on a regular basis.  For a more detailed description of
+			doxygen and all of its features visit the
+			<a href="http://www.stack.nl/~dimitri/doxygen/">doxygen homepage</a>.
+			You can get detailed documentation and information about compiling and
+			installing doxygen on a home system.
+		</p>
+		
+		<p>
+			There are two types of comments we want in your code.  The first kind
+			are comments at the beginning of each file which describes
+			the file and lists things like author and known bugs.  The
+			second kind of comments are those that describe your functions and
+			data structures.  We want you to put comments on all your functions
+			and data structures.  You do not have to comment individual variable
+			instances but are welcome to if you'd like.  The rest of this
+			document talks about the doxygen commands that you need for each of
+			the two kinds.  First, we'll describe what we expect to see and then
+			talk about the specific commands that you need to use including
+			simple examples.  Lastly there will be a larger example showing all
+			of commands together.
+		</p>
+		
+		<a name="files">
+			<h2>Comments for Files</h2>
+		</a>
+		<p>
+			Each file needs to begin with the <a href="#commands"><b>@file</b></a>
+			command stating the name of the file.  This should be followed by a
+			brief description of the file using the
+			<a href="#commands"><b>@brief</b></a> command.  If necessary, you can
+			follow this with a more detailed description.  Next you should
+			put your name and andrew id, along with your partners name and andrew
+			id, using the <a href="#commands"><b>@author</b></a> tag.  This needs
+			to be followed with a bugs section with a list of known bugs using
+			the <a href="#commands"><b>@bug</b></a> command.  If there are no known
+			bugs, explicitly state that using the
+			<a href="#commands"><b>@bug</b></a> command. 
+		</p>
+		
+		<a name="functions">
+			<h2>Comments for Functions and Data Structures</h2>
+		</a>
+		<p>
+			Before each function, data structure, and macro you should put a
+			comment block giving at least a brief description using the
+			<b><a href="#commands">@brief</a></b> command. A brief description
+			will suffice for your data structures but for you macros and
+			functions you will need to use a few more commands.  After your
+			description, you should use the <b><a href="#commands">@param</a></b>
+			command to describe all of the parameters to your function. These
+			descriptions should be followed by a description of the return value
+			using the <b><a href="#commands">@return</a></b> command. Note: When
+         we say "each" function, that is not a strong statement.  You can 
+         leave out simple helper functions, like a max() macro, so you
+         don't waste time.
+		</p>
+		
+		<p>
+			You can choose to comment your functions either in the header files
+			where they are declared, in the source files where they are implemented
+			or both. This is a matter of taste.  If you put it in the header file,
+         like in the example, then you should be sure to remember to update the
+         comments with the latest details of the implemenation. If you choose to
+		   put the comments in both places note that if there is a difference between
+		   the two sets of comments, the block at the declaration will superceed the
+			one at the implementation. The long and short of this is that you should
+         <strong>not</strong> put the comments in both.  For assembly files, you
+		   can put the comments in the header file where they are declared.
+		</p>
+
+      <p>
+         Here is what we expect to see in the non-brief section of the function:
+
+         <ul>
+           <li>
+             Anything a user needs to know to decide whether this is the right
+             function for them to use for a given job.
+           </li>
+           <li>
+             Usage preconditions: must be called with interrupts disabled, etc.
+           </li>
+           <li>
+		       Any use of an unusual algorithm (in which case, cite it -- academic
+             format or page title and URL)
+           </li>
+           <li>
+             Why the code was written in a non-obvious structure.
+           </li>
+           <li>
+             Warnings about how to extend the function without breaking it.
+           </li>
+         </ul>
+
+         Not all of that will be needed for every function.  Just make sure it
+         is enough to make it clear what the function does and how it does it.
+         Don't worry to much about this documentation stuff.  If we feel that it
+         is not up to what we want, we'll let you know with your grade report
+         and probably won't take points off right now, but may in future projects.
+         Make sure that the documentation is there and that it makes sense.
+      </p>
+
+	   <a name="style">
+	      <h2>Coding Style / Coding Standards</h2>
+      </a>
+
+      <p>
+         At some point in your career you may well be required, or at least
+		   expected to adhere to an explicit coding standard document.  If you
+		   are ever present at the inception of a large project, you will have
+		   the opportunity to watch the inevitable flame war over tab stops
+		   and brace placement.  Don't worry--for 15-410, we aren't going to
+		   tie you down that much.
+      </p>
+
+      <p>
+		   However, you should use a consistent and defensible style.  It
+		   would probably be a good experience for you to read a few
+		   coding style documents to see how they differ and how you feel
+		   about the differences.  When you begin work with your partner
+		   on Project 2 you will have an opportunity to discuss this issue.
+		   We won't require the two of you to use exactly the same style,
+		   but it would probably make sense for style to not vary wildly
+		   within a single file.  For open source projects (i.e., potentially
+		   many authors over many years), one popular approach is for the
+		   "primary author" of each file to set the style (within reason) and
+		   other developers to try to emulate that style (again, within
+		   reason, but it really is good form for any change you suggest
+		   to blend in with the code that's already there).
+      </p>
+
+      <p><a name="style" />
+		   Here are some coding style documents you may find useful.
+		   This purports to be a (the?)
+		   <a href="https://www.kernel.org/doc/Documentation/CodingStyle">Linux
+		   kernel coding style</a> document.
+		   To the eyes of an
+		   old BSD hand, this looks a little cavalier, which is unsurprising.
+		   The BSD
+		   <a href="http://cvsweb.netbsd.org/bsdweb.cgi/src/share/misc/style?rev=HEAD&content-type=text/x-cvsweb-markup">Kernel Normal Form (KNF)</a> is also
+		   worth a look.
+		   Many moons ago C programmers inside AT&amp;T put together the
+		   Indian Hill C Style guide, which has been updated to yield
+		   a generically titled
+		   <A HREF="http://www.doc.ic.ac.uk/lab/cplus/cstyle.html">Recommended
+		   C Style and Coding Standards</A> guide.
+		   Here are <A HREF="https://code.google.com/p/google-styleguide/">Style guides for Google-originated open-source projects</A>, and
+		   here are <A HREF="http://www.cs.arizona.edu/%7Emccann/style_c.html">Lester McCann's suggestions "Toward Developing Good Programming Style"</A>.
+		   Of course, they contradict each other and probably
+		   every other coding style document on the planet, but you shouldn't
+		   let that bother you, and you should be able to detect a common core.
+      </p>
+
+      <p>
+		   You may also wish to consult
+		   <A HREF="https://web.archive.org/web/20150607222648/http://di002.edv.uniovi.es/~cernuda/noprog_ENG.html">
+		   How <EM>NOT</EM> to go about a programming assignment</A>
+		   by Agust&#237;n Cernuda del R&#237;o.
+      </p>
+
+      <p>
+		   What really matters is:
+		   <dl>
+		      <dt>Modularity</dt>
+		        <dd>
+		          The scheduler functions are in a file full
+		          of scheduler functions and nothing else; each function is
+		          coded up once; etc.
+		        </dd>
+
+		      <dt>Documentation</dt>
+		        <dd>
+		          This can be read at multiple levels.  For
+		          example, people can read a short file to find out if
+		          your program is right for them; can read about a
+		          module or package to see if they want to steal it for
+		          their own programs; can read about a function to
+		          decide whether they need to read the code, etc.
+     	                </dd>
+
+
+		      <dt>Maintainability</dt>
+		        <dd>
+		          Including basic things such as
+		          <strong>essentially never</strong> putting a hardwired
+		          constant such as <tt>1128</tt> into a file, and
+		          <strong>never</strong> using it twice, and
+		          <strong>never ever</strong> putting <tt>1127</tt> into
+		          your code because it's 1128 - 1. But you knew all that
+		          from 15-213, right?  Since you asked, the right way to
+		          handle 1128 would be
+		          <br>
+		          <tt>
+		             (GREY << COLOR_SHIFT) | (ELEPHANT << ANIMAL_SHIFT) | 16 /* tons */
+		          </tt>
+		          <br>
+              </dd>
+			
+		     <dt>Dead Code</dt>
+		       <dd>
+			     There are two very different kinds of "dead code" which
+				 students tend to turn in.
+			  One kind is 'debug code' which was briefly useful but never will
+			  be again, stuff like <br>
+			   &nbsp;&nbsp;&nbsp;&nbsp;<code> // printf("!!!! joe = %d\n", 4 * i / 0);</code>
+			  <br>or<br>
+			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>int threadstatus = THR_RUNNING; // THR_RUNNING|128</code>
+			  <br>or<br>
+			    &nbsp;&nbsp;&nbsp;&nbsp;<code> // if (threadid ==17) MAGIC_BREAK;</code>
+
+			  <br><br>Realistically, even if something like that helped you track down
+			  a bug once, you wouldn't re-activate it to find the next one.
+			  Since this code will never be run again, leaving it around can't
+			  do anything except distract and slow down your audience.  Don't
+			  turn it in.
+
+			  <br>In the other direction, occasional assert()s are fine.  In fact,
+			  sensibly done, they actually help document the code. See the section 
+			  on asserts.
+
+			  <br>Overall, if debug code is genuinely likely to be useful to readers
+			  or maintainers, that argues in favor of keeping it, but the vast
+			  majority of what gets stuck in temporarily is just noise, and should be
+			  deleted.
+                          <br>
+              </dd>
+
+		  <dt>Asserts</dt>
+			<dd>
+			  Asserts are statements that check that the assumptions that were made in 
+			  your program are not violated. For example, let's say you have a variable 
+			  <code>*nodeptr</code>. If, by design, <code>nodeptr</code> can never point 
+			  to <code>NULL</code>, then a statement like
+	   		  <br><code>ASSERT (nodeptr);</code><br>
+			  or, in the Linux idiom,
+	   		  <br><code>if (!nodeptr)<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;BUG();<br></code><br>
+			  is a way of verifying that this assumption is not violated. This is useful in 
+			  two ways. Firstly, it documents your assumption. Secondly, in future, if anyone 
+			  modifying your code violates this assumption, (s)he is informed of this early, 
+			  rather than having to discover this through a debugging session. 
+			  
+  			  Hardcore performance evangelists will argue that such code will almost never be 
+			  executed, and that the extra conditional statement just serves to affect the branch 
+			  prediction accuracy. People with such concerns should look at the 
+			  <a href="http://lxr.linux.no/source/include/linux/compiler.h#L60"><code>likely()</code>
+			  and <code>unlikely()</code></a> preprocessor macros in the Linux kernel and the associated 
+			  gcc builtin function <a href="http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html">
+			  <code>__builtin_expect()</code></a>.
+			  However, people who <EM>don't</EM> have measurable performance
+			  problems should probably avoid littering their code with cryptic
+			  incantations without actual benefit.
+		   </dl>
+      </p>
+		
+		<a name="commands">
+			<h2>Descriptions of Commands</h2>
+		</a>
+
+      <p>
+        Go here: <a href="http://www.stack.nl/~dimitri/doxygen/commands.html">
+		  http://www.stack.nl/~dimitri/doxygen/commands.html</a> for descriptions
+        of the commands mentioned.
+      </p>
+
+	<a name="example">	
+		<h2>Putting it All Together</h2>
+	</a>
+	<p>
+		Here is a short example showing all the elements together.
+      This is an old version of the Project 1 starter code,
+	  presented in order to demonstrate doxygen (i.e., don't
+	  cut and paste this code into a current project!).
+      As a note, README.dox is a text file
+      with a single block of C-style comments in it.
+	</p>
+	<dl compact>
+		<dt><b>README.dox:</b></dt>
+			<dd><div class="code"><pre>
+/**
+
+@mainpage 15-410 Project 1
+
+@author Harry Q. Bovik (hqbovik)
+
+Here you should tell us about how your game works.  How to play,
+any special rules you have, etc.  Also, explain any non-trivial
+design decisions you make, like how your ball gets its position
+updated, how you designed your buffer for readchar(), etc.  You should
+also comment on the stability of your code.  Any big bugs should be listed
+here.  Basically, anything that you think we need to know in general about
+your project should go here.
+
+Any additional comments you want to make can go here.  Did you like the
+project?  Was it too hard, too easy?  My TA smells bad.  Well, you get
+the idea.
+
+As a last little note, please make sure that all the documentation you
+turn in is true and accurate.  Otherwise, we will deduct points.
+
+*/
+</pre></div>
+			</dd>
+		<dt><b>console.h:</b></dt>
+			<dd><div class="code"><pre>
+/** @file console.h
+ *  @brief Function prototypes for the console driver.
+ *
+ *  This contains the prototypes for the console
+ *  driver and eventually any macros, constants,
+ *  or global variables you will need.
+ *
+ *  @author Harry Q. Bovik (hqbovik)
+ *  @author Fred Hacker (fhacker)
+ *  @bug No known bugs.
+ */
+
+#ifndef _MY_CONSOLE_H
+#define _MY_CONSOLE_H
+
+#include &lt;video_defines.h&gt;
+
+/** @brief Prints character ch at the current location
+ *         of the cursor.
+ *
+ *  If the character is a newline ('\n'), the cursor should
+ *  be moved to the next line (scrolling if necessary).  If
+ *  the character is a carriage return ('\r'), the cursor
+ *  should be immediately reset to the beginning of the current
+ *  line, causing any future output to overwrite any existing
+ *  output on the line.  If backsapce ('\b') is encountered,
+ *  the previous character should be erased (write a space
+ *  over it and move the cursor back one column).  It is up
+ *  to you how you want to handle a backspace occurring at the
+ *  beginning of a line.
+ *
+ *  @param ch the character to print
+ *  @return The input character
+ */
+int putbyte( char ch );
+
+/** @brief Prints the string s, starting at the current
+ *         location of the cursor.
+ *
+ *  If the string is longer than the current line, the
+ *  string should fill up the current line and then
+ *  continue on the next line. If the string exceeds
+ *  available space on the entire console, the screen
+ *  should scroll up one line, and then the string should
+ *  continue on the new line.  If '\n', '\r', and '\b' are
+ *  encountered within the string, they should be handled
+ *  as per putbyte. If len is not a positive integer or s
+ *  is null, the function has no effect.
+ *
+ *  @param s The string to be printed.
+ *  @param len The length of the string s.
+ *  @return Void.
+ */
+void putbytes(const char* s, int len);
+
+/** @brief Changes the foreground and background color
+ *         of future characters printed on the console.
+ *
+ *  If the color code is invalid, the function has no effect.
+ *
+ *  @param color The new color code.
+ *  @return Void.
+ */
+void set_term_color(int color);
+
+/** @brief Writes the current foreground and background
+ *         color of characters printed on the console
+ *         into the argument color.
+ *  @param color The address to which the current color
+ *         information will be written.
+ *  @return Void.
+ */
+void get_term_color(int* color);
+
+/** @brief Sets the position of the cursor to the
+ *         position (row, col).
+ *
+ *  Subsequent calls to putbytes should cause the console
+ *  output to begin at the new position. If the cursor is
+ *  currently hidden, a call to set_cursor() must not show
+ *  the cursor.
+ *
+ *  @param row The new row for the cursor.
+ *  @param col The new column for the cursor.
+ *  @return Void.
+ */
+void set_cursor(int row, int col);
+
+/** @brief Writes the current position of the cursor
+ *         into the arguments row and col.
+ *  @param row The address to which the current cursor
+ *         row will be written.
+ *  @param col The address to which the current cursor
+ *         column will be written.
+ *  @return Void.
+ */
+void get_cursor(int* row, int* col);
+
+/** @brief Hides the cursor.
+ *
+ *  Subsequent calls to putbytes must not cause the
+ *  cursor to show again.
+ *
+ *  @return Void.
+ */
+void hide_cursor();
+
+/** @brief Shows the cursor.
+ *  
+ *  If the cursor is already shown, the function has no effect.
+ *
+ *  @return Void.
+ */
+void show_cursor();
+
+/** @brief Clears the entire console.
+ *  @return Void.
+ */
+void clear_console();
+
+/** @brief Prints character ch with the specified color
+ *         at position (row, col).
+ *
+ *  If any argument is invalid, the function has no effect.
+ *
+ *  @param row The row in which to display the character.
+ *  @param col The column in which to display the character.
+ *  @param ch The character to display.
+ *  @param color The color to use to display the character.
+ *  @return Void.
+ */
+void draw_char(int row, int col, int ch, int color);
+
+/** @brief Returns the character displayed at position (row, col).
+ *  @param row Row of the character.
+ *  @param col Column of the character.
+ *  @return The character at (row, col).
+ */
+char get_char(int row, int col);
+
+#endif /* _MY_CONSOLE_H */
+</pre></div>
+			</dd>
+		<dt><b>console.c:</b></dt>
+			<dd><div class="code"><pre>
+/** @file console.c
+ *  @brief A console driver.
+ *
+ *  These empty function definitions are provided
+ *  so that stdio will build without complaining.
+ *  You will need to fill these functions in. This
+ *  is the implementation of the console driver.
+ *  Important details about its implementation
+ *  should go in these comments.
+ *
+ *  @author Harry Q. Bovik (hqbovik)
+ *  @author Fred Hacker (fhacker)
+ *  @bug No know bugs.
+ */
+
+#include &lt;console.h&gt;
+
+int
+putbyte( char ch )
+{
+  return ch;
+}
+
+void 
+putbytes( const char *s, int len )
+{
+}
+
+void
+set_term_color( int color )
+{
+}
+
+void
+get_term_color( int *color )
+{
+}
+
+void
+set_cursor( int row, int col )
+{
+}
+
+void
+get_cursor( int *row, int *col )
+{
+}
+
+void
+hide_cursor()
+{
+}
+
+void
+show_cursor()
+{
+}
+
+void 
+clear_console()
+{
+}
+
+void
+draw_char( int row, int col, int ch, int color )
+{
+}
+</pre></div>
+			</dd>
+		<dt><b>kernel.c:</b></dt>
+			<dd><div class="code"><pre>
+/** @file kernel.c
+ *  @brief An initial kernel.c
+ *
+ *  This file contains the kernel's
+ *  main() function.
+ *
+ *  You should add your own comments to
+ *  replace this one.
+ *
+ *  This is where you will eventually setup
+ *  your game board and have it run.
+ *
+ *  @author Harry Q. Bovik (hqbovik)
+ *  @author Fred Hacker (fhacker)
+ *  @bug No known bugs.
+ */
+
+/* -- Includes -- */
+
+/* libc includes. */
+#include &lt;stdio.h&gt;        /* for lprintf_kern() */
+
+/* multiboot header file */
+#include &lt;multiboot.h&gt;    /* for boot_info */
+
+/* memory includes. */
+#include &lt;lmm.public.h&gt;  /* for lmm_remove_free() */
+
+/* x86 specific includes */
+#include &lt;x86/seg.h&gt;     /* for install_user_segs() */
+#include &lt;x86/pic.h&gt;     /* for pic_init() */
+#include &lt;x86/base_irq.h&gt; /* for base_irq_master/slave */
+
+/*
+ * state for kernel memory allocation.
+ */
+extern lmm_t malloc_lmm;
+
+/*
+ * Info about system gathered by the boot loader
+ */
+extern struct multiboot_info boot_info;
+
+
+/** @brief Kernel entrypoint.
+ *  
+ *  This is the entrypoint for your kernel.
+ *  You will use this to test and debug your
+ *  drivers and it will eventually hold the
+ *  code for your game.  Right now, it is
+ *  A tight while loop.
+ *
+ * @return Should not return
+ */
+int main()
+{
+    /*
+     * Tell the kernel memory allocator which memory it can't use.
+     * It already knows not to touch kernel image.
+     */
+    lmm_remove_free( &malloc_lmm, (void*)USER_MEM_START, USER_MEM_SIZE );
+    lmm_remove_free( &malloc_lmm, (void*)0, 0x100000 );
+
+    /*
+     * Install interrupt handlers here.
+     */
+
+    /*
+     * initialize the PIC so that IRQs and
+     * exception handlers don't overlap in the IDT.
+     */
+    pic_init( BASE_IRQ_MASTER_BASE, BASE_IRQ_SLAVE_BASE );
+
+    lprintf_kern( "Hello from a brand new kernel!" );
+
+    while(1);
+
+    return 0;
+}
+</pre></div>
+			</dd>
+		</dl>
+		Click <a href="doxygen/index.html">here</a> for the
+		corresponding html document that is created by doxygen.
+		
+
+<!-- End body. -->
+
+</td>
+</tr></table>
+
+<!-- ----------------------------------------- -->
+<!-- Content Ends ---------------------------- -->
+<!-- ----------------------------------------- -->
+
+<!-- End body. -->
+
+
+</td></tr>
+<tr><td></td><td></td><td align=center>
+
+<HR>
+<P ALIGN=CENTER>[Last modified Monday August 31, 2015]</P></td></tr>
+</table>
+
+</body>
+</html>
+ 

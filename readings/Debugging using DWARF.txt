@@ -1,0 +1,1875 @@
+Introduction to the
+DWARF Debugging Format
+Michael J. Eager, Eager Consulting
+February, 2007
+
+It   would   be   wonderful   if   we   could   write 
+programs   that   were   guaranteed   to   work 
+correctly and never needed to be debugged. 
+Until   that   halcyon   day,   the   normal   pro­
+gramming cycle is going to involve writing 
+a program, compiling it, executing it, and 
+then   the   (somewhat)   dreaded   scourge   of 
+debugging it. And then repeat until the pro­
+gram works as expected. 
+
+quence   of   simple   operations,   registers, 
+memory   addresses,   and   binary   values 
+which   the   processor   actually   understands. 
+After all, the processor  really doesn't care 
+whether you used object oriented program­
+ming, templates, or smart pointers; it only 
+understands a very simple set of operations 
+on a limited number of registers and mem­
+ory locations containing binary values. 
+
+It is possible to debug programs by in­
+serting code that prints values of various in­
+teresting  variables. Indeed,  in  some  situa­
+tions, such as debugging kernel drivers, this 
+may   be   the   preferred   method.   There   are 
+low­level debuggers that allow you to step 
+through   the   executable   program,   instruc­
+tion by instruction, displaying registers and 
+memory contents in binary. 
+
+As   a   compiler   reads   and   parses   the 
+source of a program, it collects a variety of 
+information about the program, such as the 
+line numbers where a variable or function 
+is declared or used. Semantic analysis ex­
+tends this information to fill in details such 
+as the types of variables and arguments of 
+functions. Optimizations may move parts of 
+the   program   around,   combine   similar 
+pieces, expand inline functions, or remove 
+parts   which   are   unneeded.   Finally,   code 
+generation   takes   this   internal   representa­
+tion of the program and generates the actu­
+al machine instructions. Often, there is an­
+other  pass over  the  machine code  to  per­
+form what are called "peephole" optimiza­
+tions that may further rearrange or modify 
+the code, for example, to eliminate dupli­
+cate instructions. 
+
+But it is much easier to use a source­lev­
+el   debugger   which   allows   you   to   step 
+through   a   program's   source,   set   break­
+points, print variable values, and perhaps a 
+few other functions such as allowing you to 
+call a function in your program while in the 
+debugger.   The   problem   is   how   to   coordi­
+nate   two   completely   different   programs, 
+the compiler and the debugger, so that the 
+program can be debugged. 
+
+All­in­all, the compiler's task is to take 
+the well­crafted and understandable source 
+Translating from
+code and convert it into efficient but essen­
+Source to
+tially unintelligible machine language. The 
+better the compiler achieves the goal of cre­
+Executable
+ating tight and fast code, the more likely it 
+he   process   of   compiling   a   program  is that the result will be difficult to under­
+from human­readable form into the bi­ stand. 
+nary that a processor executes is quite com­
+During   this   translation   process,   the 
+plex, but it essentially involves successively 
+compiler
+  collects   information   about   the 
+recasting the source into simpler and sim­
+program
+ 
+which   will   be   useful   later   when 
+pler forms, discarding information at each 
+step until, eventually, the result is the se­ the   program   is   debugged.   There   are   two 
+challenges   in   doing   this   well.   The   first   is 
+that in the later parts of this process, it may 
+Michael Eager is Principal Consultant at 
+be   difficult   for   the   compiler   to   relate   the 
+Eager Consulting (www.eagercon.com), 
+changes it is making to the program to the 
+specializing   in   development   tools   for 
+original  source code that  the  programmer 
+embedded systems.   He was a member 
+wrote. For example, the peephole optimizer 
+of PLSIG's DWARF standardization com­
+may remove an instruction because it was 
+mittee   and   has   been   Chair   of   the 
+able to switch around the order of a test in 
+DWARF   Standards   Committee   since 
+code that was generated by an inline func­
+1999.     Michael   can   be   contacted   at 
+tion in the instantiation of a C++ template. 
+eager@eagercon.com.
+ 
+ 
+By the time it gets its metaphorical hands 
+© Eager Consulting, 2006, 2007
+on the program, the optimizer may have a 
+
+T
+
+difficult time connecting its manipulations 
+of   low­level   code   to   the   original   source 
+which generated it.  
+The second challenge is how to describe 
+the executable program and its relationship 
+to the original source with enough detail to 
+allow a debugger to provide the program­
+mer useful information. At the same time, 
+the description has to be concise enough so 
+that it does not take up an extreme amount 
+of   space   or   require   significant   processor 
+time to interpret. This is where the DWARF 
+Debugging Format comes in: it is a compact 
+representation of the relationship between 
+the executable program and the source in a 
+way that is reasonably efficient for a debug­
+ger to process. 
+
+The Debugging
+Process
+
+W
+
+hen   a   programmer   runs   a   program 
+under   a   debugger,   there   are   some 
+common  operations  which   he   or  she  may 
+want to do. The most common of these are 
+setting a breakpoint to stop the debugger at 
+a particular point in the source, either by 
+specifying   the   line   number   or   a   function 
+name.     When   this   breakpoint   is   hit,   then 
+the programmer usually would like to dis­
+play the values of local or global variables, 
+or the arguments to the function.  Display­
+ing the call stack lets the programmer know 
+how the program arrived at the breakpoint 
+in cases where there are multiple execution 
+paths. After reviewing this information, the 
+programmer can ask the debugger to con­
+tinue execution of the program under test.
+There are a number of additional opera­
+tions that are useful in debugging.  For ex­
+ample, it may be helpful to be able to step 
+through a program line by line, either en­
+tering   or   stepping   over   called   functions. 
+Setting a breakpoint at every instance of a 
+template or  inline function  can be  impor­
+tant for debugging C++ programs. It can 
+be helpful to stop just before the end of a 
+function so that the return value can be dis­
+played   or   changed.     Sometimes   the   pro­
+grammer may want to bypass execution of 
+a function, returning a known value instead 
+
+of what the function would have (possibly  Sun extensions.   Nonetheless, stabs is still 
+incorrectly) computed.  
+widely used.
+There  are also data  related operations 
+that   are   useful.     For   example,   displaying 
+the type of a variable can avoid having to 
+look up the type in the source files.   Dis­
+playing the value of a variable in different 
+formats, or displaying a memory or register 
+in a specified format is helpful.  
+There are some operations which might 
+be   called   advanced   debugging   functions: 
+for   example,   being   able   to   debug   multi­
+threaded   programs   or   programs   stored   in 
+write­only memory.  One might want a de­
+bugger   (or   some   other   program   analysis 
+tool) to keep track of whether certain sec­
+tions   of   code   had   been   executed   or   not. 
+Some debuggers allow the programmer to 
+call functions in the program being tested. 
+In   the   not­so­distant   past,  debugging  pro­
+grams that had been optimized would have 
+been considered an advanced feature.  
+The task of a debugger is to provide the 
+programmer with a view of the executing 
+program in as natural and understandable 
+fashion as possible, while permitting a wide 
+range   of   control   over   its   execution.     This 
+means that the debugger has to essentially 
+reverse   much   of   the   compiler’s   carefully 
+crafted transformations, converting the pro­
+gram’s data and state back into the terms 
+that the programmer originally used in the 
+program’s source.
+
+COFF   stands   for   Common   Object   File 
+Format and originated with Unix System V 
+Release 3.   Rudimentary debugging  infor­
+mation was defined with the COFF format, 
+but since COFF includes support for named 
+sections,   a   variety   of   different   debugging 
+formats such as stabs have been used with 
+COFF.   The most significant problem with 
+COFF   is   that   despite   the   Common   in   its 
+name, it isn’t the same in each architecture 
+which   uses   the   format.     There   are   many 
+variations in COFF, including XCOFF (used 
+on IBM RS/6000), ECOFF (used  on MIPS 
+and   Alpha),   and   the   Windows   PE­COFF. 
+Documentation   of   these   variants   is   avail­
+able to varying degrees but neither the ob­
+ject module format nor  the debugging in­
+formation is standardized.  
+
+T
+
+here   are   several   debugging   formats: 
+stabs, COFF, PE­COFF, OMF, IEEE­695, 
+and   three   versions   of   DWARF,   to   name 
+some common ones.   I’m not going to de­
+scribe these in any detail.   The intent here 
+is   only   to   mention   them   to   place   the 
+DWARF Debugging Format in context.
+The name  stabs  comes from  symbol  ta­
+ble  strings, since the debugging data were 
+originally   saved   as   strings   in   Unix’s  a.out 
+object   file’s   symbol   table.     Stabs   encodes 
+the   information   about   a   program   in   text 
+strings.     Initially   quite   simple,   stabs   has 
+evolved over time into a quite complex, oc­
+casionally   cryptic   and   less­than­consistent 
+debugging format.   Stabs is  not  standard­
+ized   nor   well   documented1.     Sun   Micro­
+systems has made a number of extensions 
+to stabs.   GCC has made other extensions, 
+while   attempting   to   reverse   engineer   the 
+
+D
+
+T
+
+IEEE­695 is  a  standard  object  file  and 
+debugging format developed jointly by Mi­
+crotec Research and HP in the late 1980’s 
+for embedded environments.  It became an 
+IEEE standard in 1990.  It is a very flexible 
+specification, intended to be usable with al­
+most   any   machine   architecture.     The   de­
+bugging format is block structured, which 
+corresponds   to   the   organization   of   the 
+source better than other formats.  Although 
+it is an IEEE standard, in many ways IEEE­
+695   is   more   like   the   proprietary   formats. 
+Although   the   original   standard   is   readily 
+available from IEEE, Microtec made a num­
+ber of extensions to support C++ and opti­
+mzed code which are poorly documented. 
+The IEEE standard was never revised to in­
+corporate   any   of   the   Microtec   and   other 
+changes.  
+
+tions to support new languages such as the 
+up­and­coming   C++   language.   DWARF   2 
+was released as a draft standard in 1990. 
+In an example of the domino theory in 
+action,   shortly   after   PLSIG   released   the 
+draft standard, fatal flaws were discovered 
+in   Motorola's   88000   microprocessor.   Mo­
+torola   pulled   the   plug   on   the   processor, 
+which   in   turn   resulted   in   the   demise   of 
+Open88,   a   consortium   of   companies   that 
+were   developing   computers   using   the 
+88000. Open88 in turn was a supporter of 
+Unix International, sponsor of PLSIG, which 
+resulted   in   UI   being   disbanded.   When   UI 
+folded, all that remained of the PLSIG was 
+a mailing list and a variety of ftp sites that 
+had various versions of the DWARF 2 draft 
+standard.   A   final   standard   was   never   re­
+leased.
+Since   Unix   International   had   disap­
+peared and PLSIG disbanded, several orga­
+nizations independently decided to extend 
+DWARF 1 and 2.  Some of these extensions 
+were   specific   to   a   single  architecture,  but 
+others might be applicable to any architec­
+ture.  Unfortunately, the different organiza­
+tions didn’t work together on these exten­
+sions.  Documentation on the extensions is 
+generally spotty or difficult to obtain.  Or as 
+a   GCC   developer   might   suggest,   tongue 
+2
+
+ The name DWARF is something of a pun, since it was 
+developed along with the ELF object file format.   The 
+name may be an acronym for “Debugging With Attribut­
+ed Record Formats”, although this is not mentioned in 
+any of the DWARF standards.
+
+1
+
+ In 1992, the author wrote an extensive document de­
+scribing the stabs generated by Sun Microsytems' com­
+pilers. Unfortunately, it was never widely distributed.
+
+Introduction to the DWARF Debugging Format
+
+DWARF 1 ─ Unix SVR4 sdb
+and PLSIG
+
+WARF originated with the C compiler 
+and  sdb  debugger   in   Unix   System   V 
+Release 4 (SVR4) developed by Bell Labs in 
+the   mid­1980s.   The   Programming   Lan­
+guages Special Interest Group (PLSIG), part 
+of Unix International (UI), documented the 
+DWARF generated by SVR4 as DWARF 1 in 
+1989.   Although   the   original   DWARF   had 
+several   clear   shortcomings,   most   notably 
+that it was not very compact, the PLSIG de­
+cided to standardize the SVR4 format with 
+only minimal modification.   It was widely 
+adopted within the embedded sector where 
+it continues to be used today, especially for 
+PE­COFF   is   the   object   module   format  small processors.  
+used by Microsoft Windows beginning with 
+Windows 95.  It is based on the COFF for­ DWARF 2 ─ PLSIG
+mat   and   contains   both   COFF   debugging 
+he PLSIG continued on to develop and 
+data and Microsoft’s own proprietary Code­
+document extensions to DWARF to ad­
+View or CV4 debugging data format.  Docu­ dress several issues, the most important of 
+mentation on the debugging format is both  which   was   to   reduce   the   amount   of   data 
+sketchy and difficult to obtain.
+that were generated. There were also addi­
+
+OMF stands for Object Module Format 
+and is the object file format used in CP/M, 
+DOS and OS/2 systems, as well as a small 
+number   of   embedded   systems.     OMF   de­
+fines   public   name   and   line   number   infor­
+mation for debuggers and can also contain 
+The challenge of a debugging data for­
+Microsoft CV, IBM PM, or AIX format de­
+mat, like DWARF, is to make this possible 
+bugging data.  OMF only provides the most 
+and even easy.
+rudimentary support for debuggers.
+
+Debugging Formats
+
+A Brief History of
+DWARF2
+
+2
+
+Michael J. Eager
+
+firmly   in   cheek,   the   extensions   were   well 
+documented: all you have to do is read the 
+compiler source code.  DWARF was well on 
+its way to following COFF and becoming a 
+collection   of   divergent   implementations 
+rather than being an industry standard.
+
+DWARF 3 ─ Free Standards
+Group
+
+D
+
+espite   several   on­line   discussions 
+about DWARF on the PLSIG email list 
+(which survived under X/Open (later Open 
+Group)   sponsorship   after   UI’s   demise), 
+there was little impetus to revise (or even 
+finalize)   the   document   until   the   end   of 
+1999.   At that time, there was interest in 
+extending   DWARF   to   have   better   support 
+for the HP/Intel IA­64 architecture as well 
+as better documentation of the ABI used by 
+C++ programs.  These two efforts separat­
+ed, and the author took over as Chair for 
+the revived DWARF Committee.  
+Following more than 18 months of de­
+velopment work and creation of a draft of 
+the   DWARF   3   specification,   the   standard­
+ization   hit   what   might   be   called   a   soft 
+patch.  The committee (and this author, in 
+particular)   wanted   to   insure   that   the 
+DWARF standard was readily available and 
+to avoid the possible divergence caused by 
+multiple   sources   for   the   standard.     The 
+DWARF   Committee   became   the   DWARF 
+Workgroup of the Free Standards Group in 
+2003. Active development and clarification 
+of the DWARF 3 Standard resumed early in 
+2005 with the goal to resolve any open is­
+sues in the standard.  A public review draft 
+was released to solicit public comments in 
+October   and   the   final   version   of   the 
+DWARF   3   Standard   was   released   in   Jan­
+uary,   2006.     After   the   Free   Standards 
+Group merged with Open Source Develop­
+ment Labs (OSDL) to form the Linux Foun­
+dation, the DWARF Committee returned to 
+independent   status   and   created   its   own 
+web site at dwarfstd.org. 
+
+DWARF Overview
+
+M
+
+ost  modern programming languages 
+are   block   structured:   each   entity   (a 
+class definition or a function, for example) 
+is   contained   within   another   entity.     Each 
+file in a  C   program   may  contain  multiple 
+data   definitions,   multiple   variable   defini­
+tions, and multiple functions.  Within each 
+C function there may be several data defini­
+tions followed by executable statements. A 
+statement may a compound statement that 
+in turn can contain data definitions and ex­
+ecutable   statements.   This   creates   lexical 
+scopes, where names are known only with­
+in the scope in which they are defined.  To 
+find the definition of a particular symbol in 
+Introduction to the DWARF Debugging Format
+
+a   program,   you   first   look   in   the   current 
+scope, then in successive enclosing scopes 
+until you find the symbol.   There may be 
+multiple   definitions   of   the   same   name   in 
+different scopes.   Compilers very naturally 
+represent a program internally as a tree.  
+DWARF follows this model in that it is 
+also block structured. Each descriptive enti­
+ty in DWARF (except for the topmost entry 
+which   describes   the   source   file)   is   con­
+tained within a parent entry and may con­
+tain   children   entities.   If   a   node   contains 
+multiple entities, they are all siblings, relat­
+ed to each other.   The DWARF description 
+of a program is a tree structure, similar to 
+the   compiler’s   internal   tree,   where   each 
+node   can   have   children   or   siblings.     The 
+nodes   may   represent   types,   variables,   or 
+functions.  This is a compact format where 
+only the information that is needed to de­
+scribe an aspect of a program is provided. 
+The format is extensible in a uniform fash­
+ion, so that a debugger can recognize and 
+ignore   an   extension,   even   if   it   might   not 
+understand its meaning.  (This is much bet­
+ter than the situation with most other de­
+bugging  formats  where the  debugger  gets 
+fatally  confused   attempting  to  read  modi­
+fied data.) DWARF is also designed to be 
+extensible  to  describe  virtually  any  proce­
+dural   programming   language   on   any   ma­
+chine architecture, rather than being bound 
+to only describing one language or one ver­
+
+sion of a language on a limited range of ar­
+chitectures.
+While DWARF is most commonly asso­
+ciated with the ELF object file format, it is 
+independent   of   the   object   file   format.     It 
+can   and   has   been   used   with   other   object 
+file formats.  All that is necessary is that the 
+different   data   sections   that   make   up   the 
+DWARF   data   be   identifiable   in   the   object 
+file or executable.  DWARF does not dupli­
+cate   information   that   is   contained   in   the 
+object file, such as identifying the processor 
+architecture or whether the file is written in 
+big­endian or little­endian format.
+
+Debugging
+Information Entry
+(DIE)
+Tags and Attributes
+
+T
+
+he basic descriptive entity in DWARF is 
+the   Debugging   Information   Entry 
+(DIE).   A   DIE   has   a  tag,   which   specifies 
+what   the   DIE   describes   and   a   list   of  at­
+tributes which fill in details and further de­
+scribes the entity. A DIE (except for the top­
+most) is contained in or owned by a parent 
+DIE and may have sibling DIEs or children 
+DIEs.   Attributes   may   contain   a   variety   of 
+values:   constants   (such   as   a   function 
+name), variables (such as the start address 
+
+hello.c:
+1: int main()
+2: {
+3:
+printf("Hello World!\n");
+4:
+return 0;
+5: }
+
+DIE – Compilation Unit
+Dir = /home/dwarf/exam ples
+Name = hello.c
+LowPC = 0x0
+HighPC = 0x2b
+Producer = GCC
+
+DIE – Subprogram
+
+Name = main
+File = hello.c
+Line = 2
+Type = int
+LowPC = 0x0
+HighPC = 0x2b
+External = yes
+
+DIE – Base Type
+
+Name = int
+ByteSize = 4
+Encoding = signed
+integer
+
+Figure 1.  Graphical representation of DWARF data
+3
+
+Michael J. Eager
+
+for   a   function),   or   references   to   another  tion for these types, C only specifies some  ue is 16 bits wide and an offset from the 
+DIE (such as for the type of a function’s re­ general   characteristics,   allowing   the   com­ high­order bit of zero. (This is a real­life ex­
+turn value).
+plier  to   pick  the  actual  specifications  that  ample   taken   from   an   implementation   of 
+best   fit   the   target   processor.   Some   lan­ Pascal that passed 16­bit integers in the top 
+Figure  1   shows   C's   classic  hello.c guages, like Pascal, allow new base types to  half of a word on the stack.) 
+program with a simplified graphical repre­ be   defined,   for   example,   an   integer   type 
+The DWARF base types allow a number 
+which can hold integer values be­
+of different encodings to be described, in­
+tween 0 and 100. Pascal doesn't 
+cluding   address,   character,   fixed   point, 
+DW_TAG_base_type
+specify how this should be imple­
+floating point, and packed decimal, in addi­
+DW_AT_name = int
+mented. One compiler might im­
+DW_AT_byte_size = 4
+tion to binary integers. There is still a little 
+plement this as a single byte, an­
+DW_AT_encoding = signed
+ambiguity remaining: for example, the ac­
+other might use a 16­bit integer, 
+tual encoding for a floating point number is 
+a third might implement all inte­
+Figure 2a.  int base type on 32­bit processor.
+not specified; this is determined by the en­
+ger types as 32­bit values no mat­
+coding that the hardware actually supports. 
+ter how they are defined. 
+In a processor which supports both 32­bit 
+With   DWARF   Version   1   and  and   64­bit   floating   point   values   following 
+DW_TAG_base_type
+other   debugging   formats,   the  the IEEE­754 standard, the encodings rep­
+DW_AT_name = int
+compiler   and   debugger   are   sup­ resented by “float” are different depending 
+DW_AT_byte_size = 2
+posed to share a common under­ on the size of the value.
+DW_AT_encoding = signed
+standing about whether an  int  is 
+Figure 2b.  int base type on 16­bit processor
+16, 32, or even 64 bits. This be­
+comes   awkward   when   the   same 
+hardware   can   support 
+sentation   of   its   DWARF   description.   The 
+topmost   DIE   represents   the   compilation  different   size   integers   or   when 
+DW_TAG_base_type
+unit. It has two “children”, the first is the  different   compilers   make   differ­
+DW_AT_name = word
+ent implementation decisions for 
+DIE   describing  main  and   the   second   de­
+DW_AT_byte_size = 4
+the same target processor. These 
+scribing the base type int which is the type 
+DW_AT_bit_size = 16
+of   the value returned by  main.   The sub­ assumptions, often undocument­
+DW_AT_bit_offset = 0
+DW_AT_encoding = signed
+program DIE is a child of the compilation  ed, make it difficult to have com­
+unit DIE, while the base type DIE is refer­ patibility between different com­
+Figure 3.  16­bit word type stored in the top 16­
+enced by the Type attribute in the subpro­ pilers or debuggers, or even be­
+tween
+ 
+different
+ 
+versions
+ 
+of
+ 
+the 
+bits of a 32­bit word.
+gram DIE.  We also talk about a DIE “own­
+same tools. 
+ing” or “containing” the children DIEs.
+
+Types of DIEs
+
+D
+
+IEs can be split into two general types. 
+Those   that   describe   data   including 
+data types and those that describe functions 
+and other executable code. 
+
+Describing Data and
+Types
+
+M
+
+ost programming languages have so­
+phisticated   descriptions   of   data. 
+There are a number of built­in data types, 
+pointers, various data structures, and usual­
+ly ways of creating new data types. Since 
+DWARF is intended to be used with a vari­
+ety of languages, it abstracts out the basics 
+and provides a representation that can be 
+used for all supported language. The prima­
+ry types, built directly on the hardware, are 
+the  base types.   Other data types are con­
+structed   as   collections   or   compositions   of 
+these base types.
+
+Base Types
+
+E
+
+very   programming   language   defines 
+several basic scalar data types. For ex­
+ample, both C and Java define int and dou­
+ble. While Java provides a complete defini­
+
+Introduction to the DWARF Debugging Format
+
+DWARF   base   types   provide 
+<1>: DW_TAG_base_type
+the   lowest   level   mapping   be­
+DW_AT_name = int
+tween the simple data types and 
+DW_AT_byte_size = 4
+how   they   are   implemented   on 
+DW_AT_encoding = signed
+the   target   machine's   hardware. 
+This makes the definition of  int 
+<2>: DW_TAG_variable
+DW_AT_name = x
+explicit for both Java and C and 
+DW_AT_type = <1>
+allows different definitions to be 
+used,   possibly   even   within   the 
+Figure 4.  DWARF description of “int x”.
+same program. Figure 2a shows 
+the DIE which describes int on a 
+typical 32­bit processor. The at­
+tributes specify the name (int), an encoding  Type Composition
+(signed   binary   integer),   and   the   size   in 
+named variable is described by a DIE 
+bytes (4). Figure 2b shows a similar defini­
+which has a variety of attributes, one 
+tion of int on a 16­bit processor.  (In Figure  of which is a reference to a type definition. 
+2, we use the tag and attribute names de­ Figure   4   describes   an   integer   variable 
+fined in the DWARF standard, rather than  named  x. (For the moment we will ignore 
+the more informal names used above.  The  the  other  information   that  is  usually   con­
+names   of   tags   are   all   prefixed   with  tained in a DIE describing a variable.) 
+DW_TAG  and   the   names   of   attributes   are 
+The base type for  int  describes it as a 
+prefixed with DW_AT.)
+signed binary integer occupying four bytes. 
+The   base   types   allow   the   compiler   to  The   DW_TAG_variable   DIE   for  x  gives   its 
+describe   almost   any   mapping   between   a  name and a type attribute, which refers to 
+programming   language   scalar   type   and  the base type DIE.  For clarity, the DIEs are 
+how it is actually implemented on the pro­ labeled sequentially in the this and follow­
+cessor. Figure 3 describes a 16­bit integer  ing examples; in the actual DWARF data, a 
+value that is stored in the upper 16 bits of a  reference   to   a   DIE   is   the   offset   from   the 
+four byte word. In this base type, there is a  start of the compilation unit where the DIE 
+bit size attribute that specifies that the val­ can be found.   References can be to previ­
+
+A
+
+4
+
+Michael J. Eager
+
+ously   defined   DIEs,   as   in   Figure   4,   or   to  Array
+DIEs   which   are   defined   later.     Once   we 
+rray   types   are   described   by   a   DIE 
+have created a base type DIE for  int, any 
+which   defines   whether   the   data   is 
+variable in the same compilation can refer­
+3
+stored in column major order (as in Fortan) 
+ence the same DIE .  
+or  in  row major  order (as in C or  C++). 
+DWARF uses the base types to construct  The index for the array is represented by a 
+other data type definitions by composition.  subrange type  that gives the lower and up­
+A new type is created as a modification of  per bounds of each dimension. This allows 
+another type. For example, Figure 5 shows  DWARF   to   describe   both   C   style   arrays, 
+a pointer to an int on our typical 32­bit ma­ which  always have  zero  as  the lowest in­
+chine. This DIE defines a pointer type, spec­ dex,   as   well   as   arrays   in   Pascal   or   Ada, 
+ifies that its size is four bytes, and in turn  which can have any value for the low and 
+references the int base type. Other DIEs de­ high bounds. 
+scribe the  const  or  volatile  attributes, C++ 
+reference   type,   or   C  restrict  types.   These 
+type  DIEs   can  be   chained   together   to   de­ Structures, Classes,
+
+A
+
+<1>: DW_TAG_variable
+DW_AT_name = px
+DW_AT_type = <2>
+<2>: DW_TAG_pointer_type
+DW_AT_byte_size = 4
+DW_AT_type = <3>
+<3>: DW_TAG_base_type
+DW_AT_name = word
+DW_AT_byte_size = 4
+DW_AT_encoding = signed
+
+Figure 5.  DWARF description of  “int *px”.
+
+<1>: DW_TAG_variable
+DW_AT_name = argv
+DW_AT_type = <2>
+
+Unions, and
+Interfaces
+
+Most   languages   allow   the 
+programmer   to   group   data   to­
+gether   into   structures   (called 
+struct  in   C   and   C++,  class  in 
+C++, and record in Pascal). Each 
+of the components of the struc­
+ture generally has a unique name 
+and   may   have   a   different   type, 
+and each occupies its own space. 
+C and C++ have the  union  and 
+Pascal has the variant record that 
+are similar to a structure except 
+that   the   component   occupy   the 
+same   memory   locations.   The 
+Java interface has a subset of the 
+properties of a C++  class, since 
+it may only have abstract meth­
+ods and constant data members. 
+
+<2>: DW_TAG_pointer_type
+DW_AT_byte_size = 4
+DW_AT_type = <3>
+
+vate, or protected. These are described with 
+the accessibility attribute. 
+C   and   C++   allow   bit   fields   as   class 
+members   that   are   not   simple   variables. 
+These are described with bit offset from the 
+start of the class instance to the left­most 
+bit of the bit field and a  bit size  that says 
+how many bits the member occupies. 
+
+Variables
+
+V
+
+ariables   are   generally   pretty   simple. 
+They have a name which represents a 
+chunk   of   memory   (or   register)   that   can 
+contain some kind of a value. The kind of 
+values that the variable can contain, as well 
+as  restrictions  on   how  it  can  be  modified 
+(e.g., whether it is  const) are described by 
+the type of the variable. 
+What   distinguishes   variables   is   where 
+the   variable   is   stored   and   its   scope.   The 
+scope of a variable defines where the vari­
+able known within the program and is, to 
+some   degree,   determined   by   where   the 
+variable   is   declared.   In   C,   variables   de­
+clared within a function or block have func­
+tion or block scope. Those declared outside 
+a function have either global or file scope. 
+This   allows   different   variables   with   the 
+same name to be defined in different files 
+without conflicting. It also allows different 
+functions or compilations to reference the 
+same   variable.   DWARF   documents   where 
+the   variable   is  declared   in  the   source   file 
+with a (file, line, column) triplet. 
+DWARF splits variables into three cate­
+gories: constants, function parameters, and 
+variables.   A   constant   is   used   to   describe 
+languages that have true named constants 
+as part of the language, such as Ada param­
+eters. (C does not have constants as part of 
+the language. Declaring a variable const just 
+says   that   you   cannot   modify   the   variable 
+without using an explicit cast.) A formal pa­
+rameter represents values passed to a func­
+tion. We'll come back to that a bit later. 
+
+Although   each   language   has 
+its own terminology (C++ calls 
+the components of a class  mem­
+<3>: DW_TAG_pointer_type
+bers  while   Pascal   calls   them 
+DW_AT_byte_size = 4
+fields)   the   underlying   organiza­
+DW_AT_type = <4>
+tion can be described in DWARF. 
+True to its heritage, DWARF uses 
+<4>: DW_TAG_const_type
+the C/C++ terminology and has 
+DW_AT_type = <5>
+DIEs   which   describe  struct, 
+<5>: DW_TAG_base_type
+union,  class,  and  interface.  We'll 
+DW_AT_name = char
+Some   languages,   like   C   or   C++   (but 
+describe  the  class  DIE   here,  but 
+DW_AT_byte_size = 1
+not Pascal), allow a variable to be declared 
+the
+ 
+others
+ 
+have
+ 
+essentially
+ 
+the 
+DW_AT_encoding = unsigned
+without defining it. This implies that there 
+same organization. 
+should be a real definition of the variable 
+Figure 6.  DWARF description of 
+The DIE for a class is the par­ somewhere else, hopefully somewhere that 
+“const char **argv”.
+ent   of   the   DIEs   which   describe  the compiler or debugger can find. A DIE 
+each   of   the   class's   members.  describing a variable declaration provides a 
+Each class has a name and possi­ description of the variable without actually 
+scribe   more   complex   data   types,   such   as 
+bly
+ 
+other
+ 
+attributes.   If   the   size   of   an   in­ telling the debugger where it is. 
+“const char **argv”   which   is   de­
+stance
+ 
+is
+ 
+known
+  at   compile   time,   then   it 
+scribed in Figure 6.
+Most variables have a location attribute 
+will have a byte size attribute. Each of these 
+descriptions   looks   very   much   like   the   de­ that describes where the variable is stored. 
+scription   of   a   simple   variable,   although  In the simplest of cases, a variable is stored 
+4
+there   may   be   some   additional   attributes.  in   memory   and   has   a   fixed   address .   But 
+3
+For example, C++ allows the programmer 
+  Some compilers define a common set of type defini­
+4
+tions at the start of every compilation unit.  Others only  to specify whether a member is public, pri­
+ Well, maybe not a fixed address, but one that is a fixed 
+generate the definitions for the types which are actually 
+referenced in the program.  Either is valid.
+
+Introduction to the DWARF Debugging Format
+
+offset from where the executable is loaded.  The loader 
+relocates references to addresses within an executable 
+
+5
+
+Michael J. Eager
+
+many   variables,   such   as   those   declared 
+within a C function, are dynamically allo­
+cated   and   locating   them   requires   some 
+(usually simple) computation. For example, 
+a   local   variable   may   be   allocated   on   the 
+stack, and locating it may be as simple as 
+adding a fixed offset to a frame pointer. In 
+other cases, the variable may be stored in a 
+register. Other variables may require some­
+what more complicated computations to lo­
+cate the data. A variable that is a member 
+of a C++ class may require more complex 
+computations to determine the location of 
+the base class within a derived class. 
+
+Describing
+Executable Code
+
+Location
+Expressions
+
+A   Subprogram   DIE   has   attributes   that 
+give   the   low   and   high   memory   addresses 
+that the subprogram occupies, if it is con­
+tiguous, or a list of memory ranges if the 
+function does not occupy a contiguous set 
+of memory addresses. The low PC address 
+is   assumed   to   be   the   entry   point   for   the 
+routine   unless   another   one   is   explicitly 
+specified. 
+
+D
+
+WARF provides a very general scheme 
+to describe how to locate the data rep­
+resented by a variable. A DWARF location 
+expression   contains   a   sequence   of   opera­
+tions which tell a debugger how to locate 
+the   data.   Figure   7   shows   DIEs   for   three 
+variables named a, b, and c. Variable a has 
+a fixed location in memory, variable b is in 
+register   0,   and   variable  c  is   at   offset   –12 
+within   the   current   function's   stack   frame. 
+Although  a  was   declared  first, the  DIE  to 
+describe it is generated later, after all func­
+tions.  The actual location of a will be filled 
+in by the linker.
+The   DWARF   location   expression   can 
+contain a sequence of operators and values 
+that   are   evaluated   by   a   simple   stack   ma­
+chine.   This   can   be   an   arbitrarily   complex 
+computation,   with   a   wide   range   of   arith­
+metic operations, tests and branches within 
+the expression, calls to evaluate other loca­
+tion  expressions, and   accesses  to  the  pro­
+cessor's   memory   or   registers.   There   are 
+even   operations   used   to   describe   data 
+which is split up and stored in different lo­
+cations,   such   as   a   structure   where   some 
+data   are   stored   in   memory   and   some   are 
+stored in registers. 
+Although this great flexibility is seldom 
+used   in   practice,   the   location   expression 
+should   allow   the   location   of   a   variable's 
+data to be described no matter how com­
+plex the language definition or how clever 
+the compiler's optimizations.
+
+so that at run­time the location attribute contains the 
+actual memory address. In an object file, the location at­
+tribute is the offset, along with an appropriate reloca­
+tion table entry. 
+
+Introduction to the DWARF Debugging Format
+
+Functions and Subprograms
+
+D
+
+WARF treats functions that return val­
+ues   and   subroutines   that   do   not   as 
+variations of the same thing. Drifting slight­
+ly   away   from   its   roots   in   C   terminology, 
+DWARF describes both with a Subprogram 
+DIE. This DIE has a name, a source location 
+triplet,   and   an   attribute   which   indicates 
+whether the subprogram is external, that is, 
+visible outside the current compilation. 
+
+A   function   may   define   variables   that 
+may be local or global. The DIEs for these 
+variables follow the parameter DIEs. Many 
+languages   allow   nesting   of   lexical   blocks. 
+These are represented by lexical block DIEs 
+which   in   turn,  may   own  variable  DIEs  or 
+nested lexical block DIEs. 
+Here  is   a   somewhat   longer   example. 
+Figure   8a   shows   the   source   for 
+strndup.c,   a   function   in  gcc  that  dupli­
+cates a string.   Figure 8b lists the DWARF 
+generated for this file. As in previous exam­
+ples, the source line information and the lo­
+cation attributes are not shown.  
+
+In Figure 8b, DIE <2> shows the defi­
+nition of  size_t  which is a  typdef  of  unsigned int.   This allows a debugger to 
+display the type of formal argument n as a 
+size_t,   while   displaying   its   value   as   an 
+unsigned integer.   DIE <5> describes the 
+function strndup.  This has a pointer to its 
+sibling,   DIE   <10>;   all   of   the   following 
+DIEs are children of the Subprogram DIE. 
+The value that a function returns is giv­ The function returns a pointer to char, de­
+en   by  the  type  attribute.  Subroutines  that  scribed in DIE <10>.   DIE <5> also de­
+do not return values (like C void functions)  scribes the subroutine as  external  and  pro­
+do not have this attribute. DWARF doesn't  totyped and gives the low and high PC val­
+describe the calling conventions for a func­ ues for the routine.  The formal parameters 
+tion; that is defined in the Application Bina­ and   local  variables  of  the  routine   are  de­
+ry Interface (ABI) for the particular archi­ scribed in DIEs <6> to <9>.
+tecture. There may be attributes that help a 
+debugger   to   locate   the   subpro­
+gram's data or to find the current 
+subprogram's   caller.   The  return 
+fig7.c:
+address attribute is a location ex­
+1: int a;
+pression that specifies where the 
+2: void foo()
+address   of   the   caller   is   stored. 
+3: {
+The  frame base  attribute is a lo­
+4:
+register int b;
+5:
+int c;
+cation expression that computes 
+6: }
+the   address   of   the   stack   frame 
+for the function. These are useful 
+<1>:
+DW_TAG_subprogram
+since some of the most common 
+DW_AT_name = foo
+optimizations   that   a   compiler 
+<2>:
+DW_TAG_variable
+DW_AT_name = b
+might   do   are   to   eliminate   in­
+DW_AT_type = <4>
+structions that explicitly save the 
+DW_AT_location =
+return address or frame pointer. 
+The   subprogram   DIE   owns 
+DIEs   that   describe   the   subpro­
+gram. The parameters that may 
+be passed to a function are rep­
+resented by variable DIEs which 
+have   the  variable   parameter  at­
+tribute.   If   the   parameter   is   op­
+tional   or   has   a   default   value, 
+these   are   represented   by   at­
+tributes. The DIEs for the param­
+eters   are   in   the   same   order   as 
+the   argument   list   for   the   func­
+tion, but there may be additional 
+DIEs   interspersed,   for   example, 
+to define types used by the pa­
+rameters. 
+
+6
+
+<3>:
+
+<4>:
+
+<5>:
+
+(DW_OP_reg0)
+DW_TAG_variable
+DW_AT_name = c
+DW_AT_type = <4>
+DW_AT_location =
+(DW_OP_fbreg: -12)
+DW_TAG_base_type
+DW_AT_name = int
+DW_AT_byte_size = 4
+DW_AT_encoding = signed
+DW_TAG_variable
+DW_AT_name = a
+DW_AT_type = <4>
+DW_AT_external = 1
+DW_AT_location =
+(DW_OP_addr: 0)
+
+     Figure 7.  DWARF description of variables
+a, b, and c.
+
+Michael J. Eager
+
+strndup.c:
+1: #include "ansidecl.h"
+2: #include <stddef.h>
+3:
+4: extern size_t strlen (const char*);
+5: extern PTR malloc (size_t);
+6: extern PTR memcpy (PTR, const PTR, size_t);
+7:
+8: char *
+9: strndup (const char *s, size_t n)
+10: {
+11:
+char *result;
+12:
+size_t len = strlen (s);
+13:
+14:
+if (n < len)
+15:
+len = n;
+16:
+17:
+result = (char *) malloc (len + 1);
+18:
+if (!result)
+19:
+return 0;
+20:
+21:
+result[len] = '\0';
+22:
+return (char *) memcpy (result, s, len);
+23: }
+
+Figure 8a.  Source for strndup.c.
+
+<1>: DW_TAG_base_type
+DW_AT_name = int
+DW_AT_byte_size = 4
+DW_AT_encoding = signed
+<2>: DW_TAG_typedef
+DW_AT_name = size_t
+DW_AT_type = <3>
+<3>: DW_TAG_base_type
+DW_AT_name = unsigned int
+DW_AT_byte_size = 4
+DW_AT_encoding = unsigned
+<4>: DW_TAG_base_type
+DW_AT_name = long int
+DW_AT_byte_size = 4
+DW_AT_encoding = signed
+<5>: DW_TAG_subprogram
+DW_AT_sibling = <10>
+DW_AT_external = 1
+DW_AT_name = strndup
+DW_AT_prototyped = 1
+DW_AT_type = <10>
+DW_AT_low_pc = 0
+DW_AT_high_pc = 0x7b
+<6>: DW_TAG_formal_parameter
+DW_AT_name = s
+DW_AT_type = <12>
+DW_AT_location =
+(DW_OP_fbreg: 0)
+
+about   the   compila­
+tion, including the di­
+rectory   and   name   of 
+the   source   file,   the 
+programming   lan­
+guage   used,   a   string 
+which   identifies   the 
+producer   of   the 
+DWARF data, and off­
+sets   into   the   DWARF 
+data   sections   to   help 
+locate   the   line   num­
+ber   and   macro   infor­
+mation. 
+
+are in the same order in which they appear 
+in the source file. 
+
+If   the   compilation 
+unit   is   contiguous 
+(i.e., it is loaded into 
+memory in one piece) 
+then there are values 
+for   the   low   and   high 
+memory addresses for 
+the unit. This makes it 
+easier for a debugger 
+
+DWARF Versions 2 and 3 offer several 
+ways to reduce the size of the data which 
+needs to be saved with the object file. The 
+first is to "flatten" the tree by saving it in 
+prefix order. Each type of DIE is defined to 
+either have children or not. If the DIE can­
+not have  children, the next DIE is its sib­
+ling. If the DIE can have children, then the 
+next   DIE   is   its   first   child.   The   remaining 
+children are represented as the siblings of 
+this first child. This way, links to the sibling 
+or   child   DIEs   can   be   eliminated.     If   the 
+compiler writer thinks that it might be use­
+ful to be able to jump from one DIE to its 
+sibling without stepping through each of its 
+children DIEs (for example, to jump to the 
+next function in a compilation) then a  sib­
+ling attribute can be added to the DIE. 
+
+<7>: DW_TAG_formal_parameter
+DW_AT_name = n
+DW_AT_type = <2>
+DW_AT_location =
+(DW_OP_fbreg: 4)
+<8>: DW_TAG_variable
+DW_AT_name = result
+DW_AT_type = <10>
+DW_AT_location =
+(DW_OP_fbreg: -28)
+<9>: DW_TAG_variable
+DW_AT_name = len
+DW_AT_type = <2>
+DW_AT_location =
+(DW_OP_fbreg: -24)
+<10>: DW_TAG_pointer_type
+DW_AT_byte_size = 4
+DW_AT_type = <11>
+<11>: DW_TAG_base_type
+DW_AT_name = char
+DW_AT_byte_size = 1
+DW_AT_encoding =
+signed char
+<12>: DW_TAG_pointer_type
+DW_AT_byte_size = 4
+DW_AT_type = <13>
+<13>: DW_TAG_const_type
+DW_AT_type = <11>
+
+Figure 8b.  DWARF description for strndup.c.
+
+Compilation Unit
+
+M
+
+to identify which compilation unit created 
+the code at a particular memory address. If 
+the compilation unit is not contiguous, then 
+a   list   of   the   memory   addresses   that   the 
+code occupies is provided by the compiler 
+and linker. 
+
+ost   interesting   programs   consists   of 
+more than a single file. Each source 
+file that makes up a program is compiled 
+independently   and   then   linked   together 
+with system libraries to make up the pro­
+gram.   DWARF   calls   each   separately   com­
+The Compilation Unit DIE is the parent 
+piled source file a compilation unit.
+of all of the DIEs that describe the compila­
+tion unit. Generally, the first DIEs will de­
+The DWARF data for each compilation 
+scribe data types, followed by global data, 
+unit   starts   with   a   Compilation   Unit   DIE. 
+then the functions that make up the source 
+This   DIE   contains   general   information 
+file.   The   DIEs   for   variables   and   functions 
+Introduction to the DWARF Debugging Format
+
+7
+
+Data encoding
+
+C
+
+onceptually, the DWARF data that de­
+scribes a program is a tree. Each DIE 
+may have a sibling and several DIEs that it 
+contains.   Each   of   the   DIEs   has   a   type 
+(called its TAG) and a number of attributes. 
+Each attributes is represented by a attribute 
+type and a value. Unfortunately, this is not 
+a   very   dense   encoding.   Without   compres­
+sion, the DWARF data is unwieldy. 
+
+A second scheme to compress the data 
+is   to   use   abbreviations.   Although   DWARF 
+allows  great  flexibility   in  which   DIEs   and 
+attributes it may generate, most compilers 
+only generate a limited set of DIEs, all of 
+which have the same set of attributes. In­
+stead of storing the value of the TAG of the 
+DIE and the attribute­value pairs, only an 
+index into a table of abbreviations is stored, 
+followed   by   the   attribute   codes.   Each   ab­
+breviation gives the tag value, a flag indi­
+cating whether the DIE has children, and a 
+list of attributes with the type of value it ex­
+pects.  Figure 9 shows the abbreviation for 
+the   formal   parameter   DIE   used   in   Figure 
+8b.   DIE <6> in Figure 8 is actually encod­
+ed as shown5. This is a significant reduction 
+in   the   amount   of   data   that   needs   to   be 
+saved at some expense in added complexi­
+ty. 
+Less   commonly   used   are   features   of 
+DWARF  Version  3  which  allow   references 
+from one  compilation  unit to  the  DWARF 
+data stored in another compilation unit or 
+in a shared library. Many compilers gener­
+ate   the   same   abbreviation   table   or   base 
+types for every compilation, independent of 
+whether the compilation actually uses all of 
+the   abbreviations   or   types.   These   can   be 
+5
+
+The encoded entry also includes the file and line values 
+which are not shown in Fig. 8b. 
+
+Michael J. Eager
+
+Abbrev 5:
+
+DW_TAG_formal_parameter
+[no children]
+DW_AT_name
+DW_FORM_string
+DW_AT_decl_file
+DW_FORM_data1
+DW_AT_decl_line
+DW_FORM_data1
+DW_AT_type
+DW_FORM_ref4
+DW_AT_location
+DW_FORM_block1
+
+┌────────────────────────────────
+│
+┌────────────────────────────
+│
+│
+┌────────────────────────
+│
+│
+│ ┌─────────────────────
+│
+│
+│ │
+┌────────────────
+│
+│
+│ │
+│
+┌─────────
+│
+│
+│ │
+│
+│
+┌─────
+
+abbreviation 5
+”s”
+file 1
+line 41
+type DIE offset
+location (fbreg + 0)
+terminating NUL
+
+for  this  row  in  the  line   number   program. 
+Figure 10 lists the line number program for 
+strndup.c. Notice that only the machine 
+addresses that represent the beginning in­
+struction   of   a   statement   are   stored.     The 
+compiler did not identify the basic blocks in 
+this code, the end of the prolog or the start 
+of the epilog to the function.   This table is 
+encoded in just 31 bytes in the line number 
+program.  
+
+Macro Information
+
+M
+
+ost   debuggers   have   a   very   difficult 
+time displaying and debugging code 
+Figure 9.  Abbreviation entry and encoded form.
+which has macros. The user sees the origi­
+nal source file, with the macros, while the 
+code  corresponds   to   whatever   the   macros 
+saved in a shared library and referenced by  presses this data by encoding it as sequence  generated. 
+each   compilation   unit,   rather   than   being  of   instructions   called   a  line   number   pro­
+DWARF includes the description of the 
+duplicated in each. 
+gram6. These instructions are interpreted by 
+a simple finite state machine to recreate the  macros   defined   in   the   program.   This   is 
+quite rudimentary information, but can be 
+complete line number table. 
+Other DWARF Data
+used   by   a   debugger   to   display   the   values 
+The   finite   state   machine   is   initialized  for a macro or possibly translate the macro 
+with a set of default values. Each row in the  into the corresponding source language. 
+Line Number Table
+line   number 
+he DWARF line table contains the map­ table is gener­
+ping between the source lines (for the  ated   by   exe­
+executable   parts   of   a   program)   and   the  cuting   one   or 
+memory that contains the code that corre­ more   of   the 
+sponds to the source. In the simplest form,  opcodes of the 
+Address File Line Col Stmt Block End Prolog Epilog ISA
+this can be looked at as a matrix with one  line   number 
+column   containing   the   memory   addresses  program.   The 
+0x0
+0
+42
+0
+yes
+no
+no
+no
+no
+0
+and another column containing the source  opcodes   are 
+0x9
+0
+44
+0
+yes
+no
+no
+no
+no
+0
+triplet (file, line, and column). If you want  generally 
+0x1a
+0
+44
+0
+yes
+no
+no
+no
+no
+0
+to set a breakpoint at a particular line, the  quite   simple: 
+0x24
+0
+46
+0
+yes
+no
+no
+no
+no
+0
+table   gives   you   the   memory   address   to  for   example, 
+0x2c
+0
+47
+0
+yes
+no
+no
+no
+no
+0
+store the breakpoint instruction. Converse­ add a value to 
+0x32
+0
+49
+0
+yes
+no
+no
+no
+no
+0
+ly, if your program has a fault (say, using a  either the ma­
+0x41
+0
+50
+0
+yes
+no
+no
+no
+no
+0
+bad pointer) at some location in memory,  chine   address 
+0x47
+0
+51
+0
+yes
+no
+no
+no
+no
+0
+you can look for the source line that is clos­ or   to   the   line 
+0x50
+0
+53
+0
+yes
+no
+no
+no
+no
+0
+est to the memory address. 
+0x59
+0
+54
+0
+yes
+no
+no
+no
+no
+0
+number,   set 
+0x6a
+0
+54
+0
+yes
+no
+no
+no
+no
+0
+DWARF  has   extended  this  with   added  the   column 
+0x73
+0
+55
+0
+yes
+no
+no
+no
+no
+0
+columns   to   convey   additional   information  number,   or 
+0x7b
+0
+56
+0
+yes
+no
+yes
+no
+no
+0
+set
+ 
+a
+ 
+flag 
+about a program. As a compiler optimizes 
+File 0: strndup.c
+the   program,   it   may   move   instructions  which   indi­
+File 1: stddef.h
+around or remove them. The code for a giv­ cates   that   the 
+memory
+ 
+ad­
+en source statement may not be stored as a 
+Figure 10.  Line Number Table for strndup.c.
+sequence of machine instructions, but may  dress   repre­
+be   scattered   and   interleaved   with   the   in­ sents the start 
+structions   for   other   nearby   source   state­ of   an   source 
+ments. It may be useful to identify the end  statement, the 
+Call Frame Information
+of the code which represents the prolog of  end of the function prolog, or the start of 
+very   processor   has   a   certain   way   of 
+a function or the beginning of the epilog, so  the function epilog. A set of special opcodes 
+calling   functions   and   passing   argu­
+combine the most common operations (in­
+that the debugger can stop after all of the 
+ments,
+  usually   defined   in   the   ABI.   In   the 
+crementing the memory address and either 
+arguments to a function have been loaded 
+or  before the function returns. Some pro­ incrementing   or   decrementing   the   source  simplest   case,   this   is   the   same   for   each 
+function   and   the   debugger   knows   exactly 
+cessors can execute more than one instruc­ line number) into a single opcode. 
+how  to  find  the  argument values and  the 
+tion set, so there is another column that in­
+Finally, if a row of the line number ta­
+dicates which set is stored at the specified  ble has the same source triplet as the previ­ return address for the function. 
+machine location. 
+For some processors, there may be dif­
+ous row, then no instructions are generated 
+As you might imagine, if this table were  6  Calling this a line number program is something of a  ferent calling sequences depending on how 
+stored with one row for each machine in­ misnomer. The program describes much more than just  the function is written, for example, if there 
+struction, it would be huge. DWARF com­ line numbers, such as instruction set, beginning of basic  are   more   than   a   certain   number   of   argu­
+ments.   There   may   be   different   calling   se­
+blocks, end of function prolog, etc.
+
+05 7300 01 29 0000010c 9100 00
+
+T
+
+E
+
+Introduction to the DWARF Debugging Format
+
+8
+
+Michael J. Eager
+
+quences   depending   on   operating   systems. 
+Compilers   will   try   to   optimize   the   calling 
+sequence   to   make   code   both   smaller   and 
+faster. One common optimization is when 
+there is a simple function which doesn't call 
+any others (a leaf function) to use its caller 
+stack frame instead of creating its own. An­
+other   optimization   may   be   to   eliminate   a 
+register   which   points   to   the   current   call 
+frame.   Some   registers   may   be   preserved 
+across the call while others are not. While it 
+may be possible for the debugger to puzzle 
+out all the possible permutations in calling 
+sequence   or   optimizations,   it   is   both   te­
+dious   and   error­prone.   A   small   change   in 
+the optimizations and the debugger may no 
+longer be able to walk the stack to the call­
+ing function. 
+
+ELF sections
+
+Summary
+
+hile DWARF is defined in a way that 
+allows it to be used with any object 
+file format, it's most often used with ELF. 
+Each of the different kinds of DWARF data 
+are stored in their own section. The names 
+of these sections all start with ".debug_". 
+For improved efficiency, most references to 
+DWARF data use an offset from the start of 
+the data for  the current compilation. This 
+avoids the need to relocate the debugging 
+data, which speeds up program loading and 
+debugging. 
+
+o there you have it ─ DWARF in a nut­
+shell. Well, not quite a nutshell. The ba­
+sic concepts for the DWARF debug informa­
+tion are straight­forward. A program is de­
+scribed   as   a   tree   with   nodes   representing 
+the various functions, data and types in the 
+source   in   a   compact   language­   and   ma­
+chine­independent   fashion.   The   line   table 
+provides   the   mapping   between   the   exe­
+cutable   instructions   and   the   source   that 
+generated them. The CFI describes how to 
+unwind the stack. 
+
+.debug_abbrev
+
+Abbreviations used in the 
+.debug_info section
+
+The   DWARF   Call   Frame   Information 
+(CFI)   provides   the   debugger   with   enough 
+information about how a function is called 
+so that it can locate each of the arguments 
+to   the   function,   locate   the   current   call 
+frame,   and   locate   the   call   frame   for   the 
+calling function. This information is used by 
+the debugger to "unwind the stack," locat­
+ing   the   previous   function,   the   location 
+where the function was called, and the val­
+ues passed. 
+
+.debug_aranges
+
+A mapping between 
+memory address and 
+compilation 
+
+.debug_frame
+
+Call Frame Information 
+
+.debug_info
+
+The core DWARF data 
+containing DIEs 
+
+.debug_line
+
+Line Number Program 
+
+.debug_loc
+
+Macro descriptions 
+
+Like  the  line number  table, the  CFI  is 
+encoded as a sequence of instructions that 
+are interpreted to generate a table. There is 
+one row in this table for each address that 
+contains   code.   The   first   column   contains 
+the machine address while the subsequent 
+columns contain the values of the machine 
+registers   when   the   instruction   at   that   ad­
+dress is executed. Like the line number ta­
+ble,   if   this   table   were   actually   created   it 
+would be huge. Luckily, very little changes 
+between  two   machine  instructions,   so   the 
+CFI encoding is quite compact. 
+
+.debug_macinfo
+
+A lookup table for global 
+objects and functions 
+
+Introduction to the DWARF Debugging Format
+
+W
+
+The ELF sections and their contents are
+
+.debug_pubnames A lookup table for global 
+objects and functions 
+.debug_pubtypes A lookup table for global 
+types
+.debug_ranges
+
+Address ranges 
+referenced by DIEs 
+
+.debug_str
+
+String table used by 
+.debug_info
+
+9
+
+S
+
+There   is   quite   a   bit   of   subtlety   in 
+DWARF as well, given that it needs to ex­
+press the many different nuances for a wide 
+range of  programming languages and  dif­
+ferent machine architectures. Future direc­
+tions   for   DWARF   are   to   improve   the   de­
+scription of optimized code so that debug­
+gers can better navigate the code which ad­
+vanced compiler optimizations generate.
+The complete  DWARF  Version  3 Stan­
+dard is available for download without cost 
+at the DWARF website (dwarf.freestandard­
+s.org).  There is also a mailing list for ques­
+tions   and   discussion   about   DWARF.     In­
+structions on registering for the mailing list 
+are also on the website.
+
+Acknowledgements
+I want to thank Chris Quenelle of Sun 
+Microsystems and Ron Brender, formerly of 
+HP,  for   their  comments  and   advice  about 
+this paper.  Thanks also to Susan Heimlich 
+for her many editorial comments.
+
+Michael J. Eager
+
+Generating DWARF with GCC
+It’s very simple to generate DWARF with gcc.  Simply specify the –g option to generate 
+debugging information.  The ELF sections can be displayed using objump with the –h 
+option.
+
+$ gcc –g –c strndup.c
+$ objdump –h strndup.o
+strndup.o:
+
+file format elf32-i386
+
+Sections:
+Idx Name
+0 .text
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+
+Size
+VMA
+LMA
+File off Algn
+0000007b 00000000 00000000 00000034 2**2
+CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+.data
+00000000 00000000 00000000 000000b0 2**2
+CONTENTS, ALLOC, LOAD, DATA
+.bss
+00000000 00000000 00000000 000000b0 2**2
+ALLOC
+.debug_abbrev 00000073 00000000 00000000 000000b0 2**0
+CONTENTS, READONLY, DEBUGGING
+.debug_info
+00000118 00000000 00000000 00000123 2**0
+CONTENTS, RELOC, READONLY, DEBUGGING
+.debug_line
+00000080 00000000 00000000 0000023b 2**0
+CONTENTS, RELOC, READONLY, DEBUGGING
+.debug_frame 00000034 00000000 00000000 000002bc 2**2
+CONTENTS, RELOC, READONLY, DEBUGGING
+.debug_loc
+0000002c 00000000 00000000 000002f0 2**0
+CONTENTS, READONLY, DEBUGGING
+.debug_pubnames 0000001e 00000000 00000000 0000031c 2**0
+CONTENTS, RELOC, READONLY, DEBUGGING
+.debug_aranges 00000020 00000000 00000000 0000033a 2**0
+CONTENTS, RELOC, READONLY, DEBUGGING
+.comment
+0000002a 00000000 00000000 0000035a 2**0
+CONTENTS, READONLY
+.note.GNU-stack 00000000 00000000 00000000 00000384 2**0
+CONTENTS, READONLY
+
+Printing DWARF using Readelf
+Readelf can display and decode the DWARF data in an object or executable file.  The 
+options are
+-w
+-w[liaprmfFso]
+l
+i
+a
+p
+r
+m
+f
+F
+s
+o
+
+display all DWARF sections
+display specific sections
+line table
+debug info
+abbreviation table
+public names
+ranges
+macro table
+debug frame (encoded)
+debug frame (decoded)
+string table
+location lists
+
+The DWARF listing for all but the smallest programs is quite voluminous, so it would 
+be a good idea to direct readelf’s output to a file and then browse the file with less or 
+an editor such as vi.
+
+Introduction to the DWARF Debugging Format
+
+10
+
+Michael J. Eager
+
+
