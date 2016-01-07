@@ -139,7 +139,7 @@ clean:
 	rm -f MAKE.* RUN.*
 	rm -f */*.pyc */*/*.pyc */*/*/*.pyc
 	rm -f *.warn
-	rm -f tests/dump/*
+	rm -rf tests/dump
 	rm -f tests/*.dump
 
 veryclean: clean
@@ -175,6 +175,9 @@ docfly: veryclean html_doc
 
 
 stack_internal stack_internal_main stack_internal_full mytest2:
+	if [ ! -d "tests/dump" ];then \
+			mkdir tests/dump; \
+	fi;
 	$(CC)   -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
 	$(CC)   -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
 	$(CC)   -o tests/dump/$@64 tests/$@.c

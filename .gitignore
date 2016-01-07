@@ -6,3 +6,4 @@
 *.warn
 */doc
 .gdb_history
+!kernel_pathos.o
