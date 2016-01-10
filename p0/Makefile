@@ -178,9 +178,9 @@ stack_internal stack_internal_main stack_internal_full mytest2:
 	if [ ! -d "tests/dump" ];then \
 			mkdir tests/dump; \
 	fi;
-	$(CC)   -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC)   -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
-	$(CC)   -o tests/dump/$@64 tests/$@.c
+	$(CC)   -g -S -o tests/dump/$@.s $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC)   -g -o tests/dump/$@ $(CFLAGS) $(LDFLAGS) tests/$@.c
+	$(CC)   -g -o tests/dump/$@64 tests/$@.c
 	readelf -a tests/dump/$@ > tests/dump/$@.dump
 	objdump -d tests/dump/$@ >> tests/dump/$@.dump
 

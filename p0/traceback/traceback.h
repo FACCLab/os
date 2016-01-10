@@ -41,6 +41,6 @@ int getFirstStack();
  * @return The index to the function in the symbol table if found,
  * return -1 otherwise.
  */
-int funcs_find(void *addr);
+int funcs_find(int addr);
 
 #endif /* __traceback_h_ */

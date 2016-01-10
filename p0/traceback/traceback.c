@@ -13,11 +13,10 @@
 #include "contracts.h"
 #include "traceback_internal.h"
 
-int funcs_find(void *addr){
-	ASSERT(addr != NULL);
+int funcs_find(int addr){
 	int index = 0;
 	while(index <= FUNCTS_MAX_NUM){
-		if(functions[index].addr == addr){
+		if(((int)functions[index].addr) == addr){
 			return index;
 		}
 		index++;
@@ -33,6 +32,11 @@ void traceback(FILE *fp)
 	 * the symbol. So be sure to always do something with functions */
 
 	/* remove this line once you've got real code here */
+	//int count = 0;
+	//for(count = 0; count < FUNCTS_MAX_NUM; count++){
+	//	printf("functions[%d]: %s at %p\n", count, 
+	//			functions[count].name, functions[count].addr);
+	//}
 	ASSERT(fp != NULL);
 	int ebp;
 	int eip;
@@ -42,8 +46,21 @@ void traceback(FILE *fp)
 	while(ebp){
 		// Read Eip
 		eip = *(int *)(ebp+4);
-		func_addr = eip + (*(int *)(eip - 4));
-		if((func_index = funcs_find((void *)func_addr)) >= 0){
+		if(*(int *)(eip-4) == 0x602454ff){
+			// Found <main> here.
+			func_addr =*(int *) (ebp + 8 + 0x60);
+			func_index = funcs_find(func_addr);
+#ifdef DEBUG
+			fprintf(fp, "Found function %s(%p) at [%d]\n", 
+					functions[func_index].name, (void *)func_addr, func_index);
+			fflush(fp);
+#endif
+			return;
+	
+		}else{
+			func_addr = eip + (*(int *)(eip - 4));
+		}
+		if((func_index = funcs_find(func_addr)) >= 0){
 			// Found function information in functions array.
 #ifdef DEBUG
 			fprintf(fp, "Found function %s(%p) at [%d]\n", 
