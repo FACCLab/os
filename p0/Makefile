@@ -29,7 +29,7 @@ AR = ar
 
 # -O0 is needed so that gcc doesn't "helpfully" optimize the
 # calling convention for static functions.
-CFLAGS = -DDEBUG -Wall -Werror  -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
+CFLAGS = -Wall -Werror  -gdwarf-2 -O0 -m32 -fno-stack-protector -fno-omit-frame-pointer -Itraceback/
 
 # -fstack-protector
 #Emit extra code to check for buffer overflows, such as stack smashing attacks.  
@@ -162,7 +162,7 @@ tests/tmp-our-output:
 verify: tests/tmp-our-output tests/tmp-sample-output
 	@diff -bBw tests/tmp-sample-output tests/tmp-our-output
 
-docfly: veryclean html_doc 
+docfly: 
 	if [ -f /home/anglenet/www/projects/api/traceback/index.html ]; then \
 		rm -R /home/anglenet/www/projects/api/traceback/*; \
 	fi;

@@ -43,4 +43,23 @@ int getFirstStack();
  */
 int funcs_find(int addr);
 
+/**
+ * @brief Print the specified functions argument.
+ *
+ * @param fp	Specifies where to output the function information.
+ * @param ebp	The specified function's stack base register.
+ * @param func_index	The specified function's index in the global
+ * 										<i><b>functions</b></i> table.
+ */
+void print_func(FILE * fp, int ebp, int func_index);
+/**
+ * @brief Print main.
+ *
+ * @param fp	Specifies where to output the function information.
+ * @param ebp	main's stack base register.
+ * @param func_index	main's index in the global
+ * 										<i><b>functions</b></i> table.
+ */
+void print_main(FILE * fp, int ebp, int func_index);
+
 #endif /* __traceback_h_ */

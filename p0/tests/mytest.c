@@ -4,7 +4,19 @@
 void first(){
 	traceback(stdout);
 }
-int main(){
+void second(){
 	first();
+}
+void third(){
+	second();
+}
+void fourth(){
+	third();
+}
+void mess(){
+	fourth();
+}
+int main(){
+	mess();
 	return 0;
 }

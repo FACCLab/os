@@ -8,7 +8,10 @@
  *  @bug Unimplemented
  */
 
+
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "contracts.h"
 #include "traceback_internal.h"
@@ -22,6 +25,47 @@ int funcs_find(int addr){
 		index++;
 	}
 	return -1;
+}
+void print_func(FILE * fp, int ebp, int func_index){
+	fprintf(fp, "Function %s(", functions[func_index].name);
+	int i = 0;
+	int offset = 0;
+	char const *name;
+	name = functions[func_index].args[i].name;
+	if(strlen(name) == 0){
+		fprintf(fp, "void");
+	} else {
+		do{
+			offset = functions[func_index].args[i].offset;
+			switch(functions[func_index].args[i].type){
+				case TYPE_INT:
+					fprintf(fp, "int %s=%d, ", name, *(int *)(ebp + offset));  
+					break;
+				case TYPE_CHAR:
+					if(isprint(*(char *)(ebp+offset))){
+						fprintf(fp, "char %s=%c, ", name, *(char *)(ebp + offset));
+					}else{
+						fprintf(fp, "char %s=%o, ", name, *(char *)(ebp + offset));
+					}
+					break;
+				case TYPE_FLOAT:
+					fprintf(fp, "float %s=%0.6f, ", name, *(float *)(ebp + offset));
+					break;
+				case TYPE_DOUBLE:
+					fprintf(fp, "double %s=%0.6f, ", name, *(double *)(ebp + offset));
+					break;
+			}
+			name = functions[func_index].args[i++].name;
+		}while(strlen(name) != 0);
+		fprintf(fp, "\b\b");
+	}
+	fprintf(fp, "), in\n");
+	fflush(fp);
+}
+
+void print_main(FILE * fp, int ebp, int func_index){
+	fprintf(fp, "Function %s(", functions[func_index].name);
+	fprintf(fp, ")\n");
 }
 
 void traceback(FILE *fp)
@@ -50,18 +94,13 @@ void traceback(FILE *fp)
 			// Found <main> here.
 			func_addr =*(int *) (ebp + 8 + 0x60);
 			func_index = funcs_find(func_addr);
-#ifdef DEBUG
-			fprintf(fp, "Found function %s(%p) at [%d]\n", 
-					functions[func_index].name, (void *)func_addr, func_index);
-			fflush(fp);
-#endif
+			print_main(fp, ebp, func_index);
 			return;
-	
 		}else{
 			func_addr = eip + (*(int *)(eip - 4));
 		}
 		if((func_index = funcs_find(func_addr)) >= 0){
-			// Found function information in functions array.
+			print_func(fp, ebp, func_index);
 #ifdef DEBUG
 			fprintf(fp, "Found function %s(%p) at [%d]\n", 
 					functions[func_index].name, (void *)func_addr, func_index);
@@ -69,7 +108,8 @@ void traceback(FILE *fp)
 #endif
 		}else{
 			// Our functions array didnot hold infor about this function.
-			fprintf(fp, "Unknown %p\n", (void *)func_addr);	
+			//fprintf(fp, "Unknown %p\n", (void *)func_addr);	
+			fprintf(fp, "Function %p(...), in\n", (void *)func_addr);
 		}
 		ebp = * (int *)ebp;
 	}
