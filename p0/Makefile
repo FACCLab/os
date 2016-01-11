@@ -86,7 +86,7 @@ query_update:
 	./update.sh $(UPDATE_METHOD) query
 
 %.o: %.c 
-	@expand -t $(TABSTOP) $< | awk 'length > 1000 \
+	@expand -t $(TABSTOP) $< | awk 'length > 80\
 	  { err++; \
 	    errs[err] = "Warning: line " NR " in $< is longer than 80 characters"; \
 	  } END { \

@@ -36,26 +36,27 @@ void print_func(FILE * fp, int ebp, int func_index){
 		fprintf(fp, "void");
 	} else {
 		do{
-			offset = functions[func_index].args[i].offset;
+			offset = ebp + functions[func_index].args[i].offset;
 			switch(functions[func_index].args[i].type){
 				case TYPE_INT:
-					fprintf(fp, "int %s=%d, ", name, *(int *)(ebp + offset));  
+					fprintf(fp, "int %s=%d, ", name, *(int *)offset);  
 					break;
 				case TYPE_CHAR:
 					if(isprint(*(char *)(ebp+offset))){
-						fprintf(fp, "char %s='%c', ", name, *(char *)(ebp + offset));
+						fprintf(fp, "char %s='%c', ", name, 
+								*(char *)offset);
 					}else{
-						fprintf(fp, "char %s='\\%o', ", name, *(char *)(ebp + offset));
+						fprintf(fp, "char %s='\\%o', ", name, *(char *)offset);
 					}
 					break;
 				case TYPE_FLOAT:
-					fprintf(fp, "float %s=%0.6f, ", name, *(float *)(ebp + offset));
+					fprintf(fp, "float %s=%0.6f, ", name, *(float *)offset);
 					break;
 				case TYPE_DOUBLE:
-					fprintf(fp, "double %s=%0.6f, ", name, *(double *)(ebp + offset));
+					fprintf(fp, "double %s=%0.6f, ", name, *(double *)offset);
 					break;
 				case TYPE_STRING:
-					fprintf(fp, "char *%s=\"%s\", ", name, (char *)(ebp + offset));
+					fprintf(fp, "char *%s=\"%s\", ", name, (char *)offset);
 					break;
 				case TYPE_STRING_ARRAY:
 					fprintf(fp, "char **%s=unimplemented, ", name);

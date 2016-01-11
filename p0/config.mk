@@ -9,7 +9,7 @@
 # standard of eight characters, this is your opportunity to inform
 # our print scripts.
 #
-TABSTOP = 8
+TABSTOP = 2
 
 #
 # Object files that should be linked into the traceback library
