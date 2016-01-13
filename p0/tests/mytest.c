@@ -12,7 +12,8 @@ void third(){
 	float b = 4.5;
 	double c = 3.3;
 	char d = 'd';
-	char *e = "argE";
+	
+	char *e = "argE\1";
 	const char *f[] = {"f1", "f2", "f3"};
 	second(a, b, c, d, e, (char **)f, (void *)&a);
 }
