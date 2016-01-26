@@ -13,15 +13,16 @@ void third(){
 	double c = 3.3;
 	char d = 'd';
 	
-	char *e = "argE\1";
-	const char *f[] = {"f1", "f2", "f3"};
+	char *e = "argE0123456789012345678901";
+	const char *f[] = {"1234567890123456789012345678", "f2", "f3", "f4"};
 	second(a, b, c, d, e, (char **)f, (void *)&a);
 }
-void fourth(){
+void fourth(int a, int b){
+	a = a+b;
 	third();
 }
 void mess(){
-	fourth();
+	fourth(2, 3);
 }
 int main(){
 	mess();
