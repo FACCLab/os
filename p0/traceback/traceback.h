@@ -30,6 +30,13 @@ void traceback(FILE *);
  */
 int getFirstStack();
 
+/**
+ * @brief Get the current esp register content.
+ *
+ * @return 	The current esp register content.
+ */
+int getEspRegister();
+
 
 /**
  * @brief Find a specified function in the global function 

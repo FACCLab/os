@@ -5,7 +5,7 @@
  *      
  *  @time 2016-01-04 Mon 07:37 PM
  *  @author Harry Q. Bovik (hqbovik)
- *  @bug Unimplemented
+ *  @bug Could not pass the signal handling test case.
  */
 
 #include <stdio.h>
@@ -57,6 +57,12 @@ void print_func(FILE * fp, int ebp, int func_index){
 				case TYPE_STRING:
 					fprintf(fp, "char *%s=\"", name);
 					offset = *(int *)offset;
+					//fprintf(fp, "%u %u\n", (unsigned int)offset, 
+					//		(unsigned int)getEspRegister());
+					//if((unsigned int)offset <= (unsigned int)getEspRegister()){
+					//	fprintf(fp, "%p\", ", (void *)offset);
+					//	break;
+					//}
 					int strcount = 0;
 				  while(*(char *)offset){
 						if(++strcount > 25){
@@ -68,6 +74,7 @@ void print_func(FILE * fp, int ebp, int func_index){
 						}else{
 							fprintf(fp, "\\%3o", *(char *)offset);
 						}
+						fflush(fp);
 						offset++;
 					}
 					fprintf(fp, "\", ");
@@ -122,7 +129,11 @@ void print_func(FILE * fp, int ebp, int func_index){
 
 			}
 			fflush(fp);
-			name = functions[func_index].args[++i].name;
+			if(++i >= ARGS_MAX_NUM){
+				fprintf(fp, "..., ");
+				break;
+			}
+			name = functions[func_index].args[i].name;
 		}while(strlen(name) != 0);
 		fprintf(fp, "\b\b");
 	}
