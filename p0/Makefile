@@ -74,7 +74,7 @@ TEST_PROGS := $(TEST_PROGS:%=tests/%)
 
 .PHONY: update query_update html_doc print clean verify veryclean dump docfly test stack_internal stack_internal_full stack_internal_main mytest2  
 
-all: $(TEST_PROGS) tests/add_one_test tests/verify_test test 
+all: $(TEST_PROGS) tests/add_one_test tests/verify_test #test 
 
 #doupdate:
 #	./update.pl $(UPDATE_METHOD)
@@ -108,8 +108,8 @@ libtraceback.a: $(TRACEBACK_OBJS)
 $(TEST_PROGS) tests/verify_test: %: %.o libtraceback.a
 	$(CC)   -o $@ $@.o -L. libtraceback.a $(CFLAGS) $(LDFLAGS) $(LIBS) -static
 	python ./symtabgen.py $@
-	readelf -a $@ > $@.dump
-	objdump -d $@ >> $@.dump
+	#readelf -a $@ > $@.dump
+	#objdump -d $@ >> $@.dump
 	#./$@
 
 

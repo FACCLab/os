@@ -5,9 +5,8 @@
  *      
  *  @time 2016-01-04 Mon 07:37 PM
  *  @author Harry Q. Bovik (hqbovik)
- *  @bug Unimplemented
+ *  @bug Could not pass the signal handling test case.
  */
-
 
 #include <stdio.h>
 #include <string.h>
@@ -58,24 +57,66 @@ void print_func(FILE * fp, int ebp, int func_index){
 				case TYPE_STRING:
 					fprintf(fp, "char *%s=\"", name);
 					offset = *(int *)offset;
+					//fprintf(fp, "%u %u\n", (unsigned int)offset, 
+					//		(unsigned int)getEspRegister());
+					//if((unsigned int)offset <= (unsigned int)getEspRegister()){
+					//	fprintf(fp, "%p\", ", (void *)offset);
+					//	break;
+					//}
+					int strcount = 0;
 				  while(*(char *)offset){
+						if(++strcount > 25){
+							fprintf(fp, "...");
+							break;
+						}
 						if(isprint(*(char *)offset)){
 							fprintf(fp, "%c", *(char *)offset);
 						}else{
 							fprintf(fp, "\\%3o", *(char *)offset);
 						}
+						fflush(fp);
 						offset++;
 					}
 					fprintf(fp, "\", ");
 					break;
 				case TYPE_STRING_ARRAY:
 					fprintf(fp, "char **%s={", name);
-					offset = *(int *)offset;
-					while(strlen((char *)offset)){
-						fprintf(fp, "\"%s\", ", (char *)offset);
-						offset = offset + 4;
+/*
+ *
+ * |           |
+ * |-----------|
+ * |  offset   +------>|-----------------|    _________
+ * |-----------|       | string1 address +--->|'s'|'1'|
+ *                     |-----------------|    |___|___| 
+ *										 | string2 address +--->|'s'|'2'|
+ *                     |-----------------|    |___|___| 
+ *
+ */
+					int stroffset = *(int *)offset;
+					// now start to print string array
+					// 1. only print first 3 strings if possible
+					// 2. NULL pointer means end of string array.
+					// 3. One string has at most 25 charaters
+					int count = 0;
+					// The normal data memory starts from 0x08000000
+					while((*(int *)stroffset) >= 0x08000000){
+						if(++count > 3){
+							fprintf(fp, "..., ");
+							break;
+						}
+						if(strlen((char *)(*(int *)stroffset)) <= 25){
+							fprintf(fp, "\"%s\", ", (char *)(*(int *)stroffset));
+						}else{
+							char str[29];
+							strncpy(str, (char *)(*(int *)stroffset), 25);
+							str[25] = '\0';
+							strncat(str, "...", 3);
+							fprintf(fp, "\"%s\", ", str);
+						}
+						stroffset = stroffset + 4;
 					}
 					fprintf(fp, "\b\b}, ");
+					offset = offset + 4;
 					break;
 				case TYPE_VOIDSTAR:
 					fprintf(fp, "void *%s=0v%x, ", name, ebp+offset);
@@ -88,7 +129,11 @@ void print_func(FILE * fp, int ebp, int func_index){
 
 			}
 			fflush(fp);
-			name = functions[func_index].args[++i].name;
+			if(++i >= ARGS_MAX_NUM){
+				fprintf(fp, "..., ");
+				break;
+			}
+			name = functions[func_index].args[i].name;
 		}while(strlen(name) != 0);
 		fprintf(fp, "\b\b");
 	}
@@ -123,9 +168,12 @@ void traceback(FILE *fp)
 	while(ebp){
 		// Read Eip
 		eip = *(int *)(ebp+4);
-		if(*(int *)(eip-4) == 0x602454ff){
+		// 0x502454ff is the machine code.
+		// The machine code may be different from one OS to 
+		// another. 
+		if(*(int *)(eip-4) == 0x502454ff){
 			// Found <main> here.
-			func_addr =*(int *) (ebp + 8 + 0x60);
+			func_addr =*(int *) (ebp + 8 + 0x50);
 			func_index = funcs_find(func_addr);
 			print_main(fp, ebp, func_index);
 			return;

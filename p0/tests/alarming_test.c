@@ -23,6 +23,35 @@
 #include <signal.h>
 #include <sys/mman.h>
 
+/*
+ *	stack arrangement:
+ *
+ *	|-----------|
+ *	|     			|<---0xf7ffafff (Top)
+ *	|-----------|
+ *	|		  .     |
+ *	|     .			|
+ *	|		  .  +--+--->__kernel_sigreturn
+ *	|--------+--|
+ *	|				 .	|<---0xf7ffaaac
+ *	|-----------|
+ *	| 0x00000008|<---0xf7ffaaa8 (ebp) 
+ *	|-----------|
+ *	|		  .     |
+ *	|     .			|
+ *	|		  .  		|
+ *	|-----------|
+ *	|						|<---0xf7ffa8a8 (esp)
+ *	|-----------|						
+ *	|		  .     |
+ *	|     .			|
+ *	|		  .  		|
+ *	|-----------|
+ *	|						|<---0xf7ff3000 (Bottum)
+ *	|-----------|
+ *
+ */
+
 #define MEGABYTE (1024*1024)
 
 int work_done = 0;
@@ -30,14 +59,12 @@ int work_done = 0;
 void alarming(char *str, char *notstr) {
 
   traceback(stderr);
-
   work_done = 1;
 }
 
 void dingdong(int sig)
 {
   char buf[512];
-
   snprintf(buf, sizeof (buf), "Signal %d hits!--More--", sig);
   alarming(buf, buf+MEGABYTE);
 }
