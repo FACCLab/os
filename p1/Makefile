@@ -27,7 +27,8 @@
 #################### RULE HEADER ####################
 
 .PHONY: update query_update print html_doc
-all: query_update bootfd.img
+#all: query_update bootfd.img
+all: bootfd.img
 
 ############## VARIABLE DEFINITIONS #################
 
@@ -40,10 +41,10 @@ MAKE = gmake
 # names which work the same way to be on your PATH.  Note
 # that different versions of gcc generally do NOT work the
 # same way.
-CC = 410-gcc
-LD = 410-ld
-AR = 410-ar
-OBJCOPY = 410-objcopy
+CC = gcc
+LD = ld
+AR = ar
+OBJCOPY = objcopy
 
 PROJROOT = $(PWD)
 # All paths relative to PROJROOT unless otherwise noted
@@ -184,17 +185,21 @@ LDFLAGSENTRY = --entry=_main
 KCFLAGS = -nostdinc \
 	-fno-strict-aliasing -fno-builtin -fno-stack-protector -fno-omit-frame-pointer \
 	-fno-aggressive-loop-optimizations \
-	-Wall -gstabs+ -gstrict-dwarf -Werror -O0 -m32
+	-Wall -gstabs+ -gstrict-dwarf -Werror -O0 -m32 \
+	# complains lprintf if removed the next line
+	-Wno-error=format-security
 KLDFLAGS = -static -Ttext 100000 --fatal-warnings -melf_i386
 KINCLUDES = -I$(410KDIR) -I$(410KDIR)/inc \
 			-I$(410SDIR) \
 			-I$(STUKDIR) -I$(STUKDIR)/inc \
-			$(patsubst lib%.a,-I$(410KDIR)/%,$(410KERNEL_LIBS))
+			$(patsubst lib%.a,-I$(410KDIR)/%,$(410KERNEL_LIBS)) \
+			-Wno-error=format-security
 
 UCFLAGS = -nostdinc \
 	-fno-strict-aliasing -fno-builtin -fno-stack-protector -fno-omit-frame-pointer \
 	-fno-aggressive-loop-optimizations \
 	-Wall -gstabs+ -gstrict-dwarf -Werror -O0 -m32
+
 ULDFLAGS = -static -Ttext 1000000 --fatal-warnings -melf_i386 $(LDFLAGSENTRY)
 UINCLUDES = -I$(410SDIR) -I$(410UDIR)/inc -I$(410ULIBDIR)/inc \
 						-I$(STUUDIR)/inc -I$(STUULIBDIR)/inc

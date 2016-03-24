@@ -1,5 +1,6 @@
 410K_MISC_OBJS := \
 					gccisms.o \
+					reflink_db.o \
 
 410K_MISC_OBJS := $(410K_MISC_OBJS:%=$(410KDIR)/misc/%)
 

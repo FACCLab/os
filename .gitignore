@@ -8,3 +8,4 @@
 .gdb_history
 *.dump
 !kernel_pathos.o
+*.dep
